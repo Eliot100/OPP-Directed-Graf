@@ -7,11 +7,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
 import com.google.gson.Gson;
-
 import dataStructure.DGraph;
+import dataStructure.Node;
 import dataStructure.graph;
 import dataStructure.node_data;
 /**
@@ -60,7 +61,20 @@ public class Graph_Algo implements graph_algorithms{
 
 	@Override
 	public boolean isConnected() {
+		if(g.nodeHash.values().size() <= 1)
+			return true;
+		Iterator<Node> itr = g.nodeHash.values().iterator();
+		ArrayList<Node> achivd = new ArrayList<Node> ();
+		ArrayList<Node> notAchivd = new ArrayList<Node> ();
+		achivd.add(itr.next());
+		while(itr.hasNext()) {
+			notAchivd.add(itr.next());
+		}
 		// TODO Auto-generated method stub
+		
+		
+		
+		
 		return false;
 	}
 
@@ -84,8 +98,7 @@ public class Graph_Algo implements graph_algorithms{
 
 	@Override
 	public graph copy() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DGraph(g);
 	}
 
 }

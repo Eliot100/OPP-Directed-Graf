@@ -9,11 +9,11 @@ import java.util.Iterator;
  * @author Eli Ruvinov
  */
 public class DGraph implements graph{
-	int lastId;
-	int MC;
-	HashMap<Integer, Node> nodeHash;
-	HashMap<Integer, node_data> data_nodeHash;
-	Hashtable<Integer, edge_data> edgeHash;
+	public int lastId;
+	public int MC;
+	public HashMap<Integer, Node> nodeHash;
+	public HashMap<Integer, node_data> data_nodeHash;
+	public Hashtable<Integer, edge_data> edgeHash;
 
 	public DGraph(DGraph g) {
 		lastId = g.lastId;
