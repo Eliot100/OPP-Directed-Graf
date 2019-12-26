@@ -78,9 +78,9 @@ public interface graph {
 	 * @return
 	 */
 	public int edgeSize();
-/**
- * return the Mode Count - for testing changes in the graph.
- * @return
- */
+	/**
+	 * return the Mode Count - for testing changes in the graph.
+	 * @return
+	 */
 	public int getMC();
 }
