@@ -4,11 +4,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+/**
+ * This class is implementation of directed graph.
+ * @author Eli Ruvinov
+ */
 public class DGraph implements graph{
 	private static int lastId;
 	private int MC;
-	private HashMap<Integer, NodeData> nodeHash;
-	private Hashtable<Integer, EdgeData> edgeHash;
+	private HashMap<Integer, Node> nodeHash;
+	private Hashtable<Integer, Edge> edgeHash;
 	
 //	private Iterator<EdgeData> edgeIterator(){
 //		return edgeHash.values().iterator();
@@ -21,10 +25,12 @@ public class DGraph implements graph{
 //		lastId++;
 //		return lastId;
 //	}
-	
+	/**
+	 *  This is a constructor for a graph.
+	 */
 	public DGraph() {
 		lastId = 0;
-		nodeHash = new HashMap<Integer, NodeData>();
+		nodeHash = new HashMap<Integer, Node>();
 		MC = 0;
 	}
 	
@@ -40,7 +46,7 @@ public class DGraph implements graph{
 
 	@Override
 	public void addNode(node_data n) {
-		nodeHash.put(lastId, new NodeData( n.getKey(), n.getLocation(), 
+		nodeHash.put(lastId, new Node( n.getKey(), n.getLocation(), 
 				n.getWeight(), n.getInfo(), n.getTag() ));
 		lastId++;
 		MC++;
@@ -48,9 +54,9 @@ public class DGraph implements graph{
 
 	@Override
 	public void connect(int src, int dest, double w) {
-		EdgeData edge = new EdgeData(src, dest, w);
-		nodeHash.get(src).addDest(dest, edge);
-		nodeHash.get(dest).addSource(src, edge);
+		Edge edge = new Edge(src, dest, w);
+		nodeHash.get(src).addDest(edge);
+		nodeHash.get(dest).addSource(edge);
 		MC++;
 	}
 
@@ -71,14 +77,14 @@ public class DGraph implements graph{
 	@Override
 	public node_data removeNode(int key) {
 		MC++;
-		Iterator<EdgeData> fromItr = nodeHash.get(key).fromIterator();
+		Iterator<Edge> fromItr = nodeHash.get(key).fromIterator();
 		while(fromItr.hasNext()) {
-			EdgeData edge = fromItr.next(); 
+			Edge edge = fromItr.next(); 
 			nodeHash.get(edge.getDest()).toThis.remove(edge.getSrc());
 		}
-		Iterator<EdgeData> toItr = nodeHash.get(key).toIterator();
+		Iterator<Edge> toItr = nodeHash.get(key).toIterator();
 		while(toItr.hasNext()) {
-			EdgeData edge = toItr.next(); 
+			Edge edge = toItr.next(); 
 			nodeHash.get(edge.getSrc()).fromThis.remove(edge.getDest());
 		}
 		return nodeHash.remove(key);
@@ -87,9 +93,9 @@ public class DGraph implements graph{
 	@Override
 	public edge_data removeEdge(int src, int dest) {
 		MC++;
-		EdgeData edge = nodeHash.get(src).getDestEdge(dest);
-		nodeHash.get(src).removeDest(dest, edge);
-		nodeHash.get(dest).removeSource(src, edge);
+		Edge edge = nodeHash.get(src).getDestEdge(dest);
+		nodeHash.get(src).removeFromThis(edge);
+		nodeHash.get(dest).removeToThis(edge);
 		return edge;
 	}
 

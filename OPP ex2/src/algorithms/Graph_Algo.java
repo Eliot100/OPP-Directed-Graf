@@ -1,14 +1,11 @@
 package algorithms;
 
 import java.util.List;
-
 import dataStructure.graph;
 import dataStructure.node_data;
 /**
- * This empty class represents the set of graph-theory algorithms
- * which should be implemented as part of Ex2 - Do edit this class.
- * @author 
- *
+ * This class represents the set of graph-theory algorithms.
+ * @author Eli Ruvinov
  */
 public class Graph_Algo implements graph_algorithms{
 	

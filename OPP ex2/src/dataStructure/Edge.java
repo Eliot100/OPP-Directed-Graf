@@ -1,13 +1,19 @@
 package dataStructure;
-
-public class EdgeData implements edge_data {
+/**
+ * This class represent a directed path 
+ * between 2 Nodes in the directed graph.
+ * @author Eli Ruvinov
+ */
+public class Edge implements edge_data {
 	private int source;
 	private int destination;
 	private double weight;
 	private String info;
 	private int tag;
-	
-	public EdgeData(int src, int dest, double w ) {
+	/**
+	 * This is a constructor for an Edge.
+	 */
+	public Edge(int src, int dest, double w ) {
 		source = src;
 		destination = dest;
 		weight = w;

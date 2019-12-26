@@ -11,9 +11,7 @@ package algorithms;
  * @author boaz.benmoshe
  *
  */
-
 import java.util.List;
-
 import dataStructure.graph;
 import dataStructure.node_data;
 
