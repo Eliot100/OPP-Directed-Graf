@@ -1,6 +1,17 @@
 package algorithms;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+
+import com.google.gson.Gson;
+
+import dataStructure.DGraph;
 import dataStructure.graph;
 import dataStructure.node_data;
 /**
@@ -8,23 +19,43 @@ import dataStructure.node_data;
  * @author Eli Ruvinov
  */
 public class Graph_Algo implements graph_algorithms{
+	private DGraph g;
 	
 	@Override
 	public void init(graph g) {
-		// TODO Auto-generated method stub
-		
+		this.g = new DGraph(g);
 	}
 
 	@Override
 	public void init(String file_name) {
-		// TODO Auto-generated method stub
-		
+		try {
+			File DGraph_JASON = new File(file_name);
+			BufferedReader br = new BufferedReader(new FileReader(DGraph_JASON));
+			String st0 = "";
+			String st;
+			while((st = br.readLine()) != null) {
+				st0 += st;
+			}
+			br.close();
+			Gson gson = new Gson();
+			this.g = gson.fromJson(st0, DGraph.class);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
 	}
 
 	@Override
 	public void save(String file_name) {
-		// TODO Auto-generated method stub
-		
+		try {
+			File DGraph_JASON = new File(file_name);
+			PrintWriter pw = new PrintWriter(new FileWriter(DGraph_JASON));
+			pw.println(new Gson().toJson(this.g));
+			pw.close();
+		}catch (IOException e) {
+			e.printStackTrace();
+		} 
 	}
 
 	@Override

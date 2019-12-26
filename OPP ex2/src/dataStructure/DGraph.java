@@ -9,19 +9,45 @@ import java.util.Iterator;
  * @author Eli Ruvinov
  */
 public class DGraph implements graph{
-	private static int lastId;
-	private int MC;
-	private HashMap<Integer, Node> nodeHash;
-	private Hashtable<Integer, Edge> edgeHash;
+	int lastId;
+	int MC;
+	HashMap<Integer, Node> nodeHash;
+	HashMap<Integer, node_data> data_nodeHash;
+	Hashtable<Integer, edge_data> edgeHash;
+
+	public DGraph(DGraph g) {
+		lastId = g.lastId;
+		nodeHash = g.nodeHash;
+		data_nodeHash = g.data_nodeHash;
+		edgeHash = g.edgeHash;
+	}
 	
+	public DGraph(graph g) {
+		int biggestID = -1; 
+		MC = g.getMC();
+		Iterator<node_data> nodeIter = data_nodeHash.values().iterator();
+		while (nodeIter.hasNext()) {
+			node_data node = nodeIter.next();
+			Node NodeData = (Node) node;
+			nodeHash.put(NodeData.getKey(), NodeData);
+			if(NodeData.getKey() > biggestID)
+				biggestID = NodeData.getKey();
+		}
+		Iterator<edge_data> edgeIter = edgeHash.values().iterator();
+		while (edgeIter.hasNext()) {
+			edge_data edge = edgeIter.next();
+			this.connect(edge.getSrc(), edge.getDest(), edge.getWeight());
+			edgeHash.put(edge.getSrc(), edge);
+		}
+		lastId = biggestID;
+	}
 //	private Iterator<EdgeData> edgeIterator(){
 //		return edgeHash.values().iterator();
 //	}
 //	private Iterator<NodeData> nodeIterator(){
 //		return nodeHash.values().iterator();
 //	}
-	
-//	private static int newId() {
+//	public int getNewId() {
 //		lastId++;
 //		return lastId;
 //	}
@@ -31,12 +57,13 @@ public class DGraph implements graph{
 	public DGraph() {
 		lastId = 0;
 		nodeHash = new HashMap<Integer, Node>();
+		data_nodeHash = new HashMap<Integer, node_data>();
 		MC = 0;
 	}
 	
 	@Override
 	public node_data getNode(int key) {
-		return (node_data) nodeHash.get(key);
+		return nodeHash.get(key);
 	}
 
 	@Override
@@ -48,6 +75,7 @@ public class DGraph implements graph{
 	public void addNode(node_data n) {
 		nodeHash.put(lastId, new Node( n.getKey(), n.getLocation(), 
 				n.getWeight(), n.getInfo(), n.getTag() ));
+		data_nodeHash.put(n.getKey(), n);
 		lastId++;
 		MC++;
 	}
@@ -57,21 +85,18 @@ public class DGraph implements graph{
 		Edge edge = new Edge(src, dest, w);
 		nodeHash.get(src).addDest(edge);
 		nodeHash.get(dest).addSource(edge);
+		edgeHash.put(edge.getSrc(), edge);
 		MC++;
 	}
 
 	@Override
 	public Collection<node_data> getV() {
-		// TODO Auto-generated method stub
-		return null;
-//		return nodeHash.values();
+		return data_nodeHash.values();
 	}
 
 	@Override
 	public Collection<edge_data> getE(int node_id) {
-		// TODO Auto-generated method stub
-		return null;
-//		return edgeHash.values();
+		return edgeHash.values();
 	}
 
 	@Override
@@ -87,6 +112,7 @@ public class DGraph implements graph{
 			Edge edge = toItr.next(); 
 			nodeHash.get(edge.getSrc()).fromThis.remove(edge.getDest());
 		}
+		data_nodeHash.remove(key);
 		return nodeHash.remove(key);
 	}
 

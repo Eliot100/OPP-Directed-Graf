@@ -14,7 +14,7 @@ public class Node implements node_data {
 	private String info;
 	private int tag;
 	HashMap <Integer, Edge> fromThis;
-	HashMap <Integer , Edge> toThis;
+	HashMap <Integer, Edge> toThis;
 	/**
 	 * @return Iterator on the edges that exit from this Node.
 	 */
