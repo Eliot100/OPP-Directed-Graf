@@ -8,11 +8,11 @@ import utils.Point3D;
  * @author Eli Ruvinov
  */
 public class Node implements node_data  {
-	public int key;
-	public Point3D location;
-	public double weight;
-	public String info;
-	public int tag;
+	private int key;
+	private Point3D location;
+	private double weight;
+	private String info;
+	private int tag;
 	public HashMap <Integer, Edge> fromThis;
 	public HashMap <Integer, Edge> toThis;
 	/**
@@ -63,8 +63,6 @@ public class Node implements node_data  {
 	public Node(int key, Point3D location) {
 		this.key = key;
 		this.location = location;
-		this.fromThis = new HashMap <Integer, Edge>();
-		this.toThis = new HashMap <Integer, Edge>();
 		this.info = "";
 		this.tag = new Integer(0);
 		this.weight = new Double(0.0);
@@ -78,8 +76,15 @@ public class Node implements node_data  {
 		this.weight = weight;
 		this.info = info;
 		this.tag = tag;
-		this.fromThis = new HashMap <Integer, Edge>();
-		this.toThis = new HashMap <Integer, Edge>();
+	}
+	public Node(node_data n) {
+		this.info = n.getInfo();
+		this.key = n.getKey();
+		this.location = n.getLocation();
+		this.tag = n.getTag();
+		this.weight = n.getWeight();
+		this.fromThis = new HashMap<Integer,Edge>();
+		this.toThis = new HashMap<Integer,Edge>();
 	}
 	/**
 	 * This function is adding an edge that enter this Node. 
@@ -103,7 +108,7 @@ public class Node implements node_data  {
 	 */
 	public void addSource(Edge edge) {
 		if(edge.getDest() == this.getKey())
-			toThis.put(edge.getSrc(), edge);
+			this.toThis.put(edge.getSrc(), edge);
 	}
 	/**
 	 * This function is removing an edge that exit this Node. 
@@ -111,7 +116,7 @@ public class Node implements node_data  {
 	 */
 	public void removeFromThis(Edge edge) {
 		if(edge.getDest() == this.getKey())
-			fromThis.remove(edge.getDest());
+			this.fromThis.remove(edge.getDest());
 	}
 	/**
 	 * This function is removing an edge that enter this Node.
@@ -119,7 +124,7 @@ public class Node implements node_data  {
 	 */
 	public void removeToThis(Edge edge) {
 		if(edge.getDest() == this.getKey())
-			toThis.remove(edge.getSrc());
+			this.toThis.remove(edge.getSrc());
 	}
 	
 	@Override

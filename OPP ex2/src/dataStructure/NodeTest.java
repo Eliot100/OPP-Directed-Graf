@@ -212,6 +212,8 @@ class NodeTest {
 		for (int i = 0; i < 100; i++) {
 			int r = (int) (Math.random()*1000);
 			int r2 = (int) (Math.random()*1000);
+			if(r == r2)
+				continue;
 			String s = ""+r;
 			String s2 = ""+r2;
 			n.setInfo(s);

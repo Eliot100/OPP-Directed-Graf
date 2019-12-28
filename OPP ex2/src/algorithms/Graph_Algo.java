@@ -65,17 +65,17 @@ public class Graph_Algo implements graph_algorithms{
 
 	@Override
 	public boolean isConnected() {
-		if(g.nodeHash.values().size() < 2)
+		if( g.nodeSize() < 2)
 			return true;
-		Iterator<Node> itr = g.nodeHash.values().iterator();
-		Node n = itr.next();
+		Iterator<node_data> itr = g.getV().iterator();
+		node_data n = itr.next();
 		this.achivedAll(n);
 		while (itr.hasNext()) {
-			Node temp = itr.next();
+			node_data temp = itr.next();
 			if (!temp.getInfo().equals("Achieved"))
 					return false;
 		}
-		return this.could(n);
+		return this.could((Node) n);
 	}
 	/**
 	 * This function is sets all the nodes (that can by reached from n) infos to be "Achieved".
@@ -103,7 +103,7 @@ public class Graph_Algo implements graph_algorithms{
 				this.could(could);
 			}
 		}
-		for (Node node : g.nodeHash.values()) {
+		for (node_data node : g.getV()) {
 			if(!node.getInfo().equals("could"))
 				return false;
 		}
@@ -112,7 +112,7 @@ public class Graph_Algo implements graph_algorithms{
 
 	@Override
 	public double shortestPathDist(int src, int dest) {
-		LinkedList<node_data> path = (LinkedList<node_data>) shortestPath(src, dest);
+		LinkedList<node_data> path = (LinkedList<node_data>) this.shortestPath(src, dest);
 		double sum = 0;
 		Iterator<node_data> iterator = path.iterator();
 		node_data lastNode_data; 
@@ -125,7 +125,7 @@ public class Graph_Algo implements graph_algorithms{
 		while ( iterator.hasNext()) {
 			node_data node_data = (node_data) iterator.next();
 			sum += node_data.getWeight();
-			sum += this.g.nodeHash.get(lastNode_data.getKey()).fromThis.get(node_data.getKey()).getWeight();
+			sum += this.g.getRealNode(lastNode_data.getKey()).fromThis.get(node_data.getKey()).getWeight();
 			lastNode_data =node_data;
 		}
 		return sum;
@@ -133,16 +133,16 @@ public class Graph_Algo implements graph_algorithms{
 
 	@Override
 	public List<node_data> shortestPath(int src, int dest) {
-		Node source = g.nodeHash.get(src);
-		Node destanation = g.nodeHash.get(dest);
+		Node source = (Node) g.getNode(src);
+		Node destanation = (Node) g.getNode(dest);
 		if(source == null || destanation == null)
 			return null;
 		HashMap<Integer, Node> hasReached = new HashMap<Integer, Node>();
 		HashMap<Integer, LinkedList<node_data>> pathes = new HashMap<Integer, LinkedList<node_data>>();
 		ArrayList<Node> onEdge = new ArrayList<Node>();
 		onEdge.add(source);
-		for (Iterator<Node> iterator = g.nodeHash.values().iterator(); iterator.hasNext();) {
-			Node node = iterator.next();
+		for (Iterator<node_data> iterator = g.getV().iterator(); iterator.hasNext();) {
+			Node node = (Node) iterator.next();
 			node.setTag(node.fromThis.size());
 		}
 		while (!onEdge.isEmpty()) {
