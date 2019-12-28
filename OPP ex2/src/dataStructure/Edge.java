@@ -18,6 +18,33 @@ public class Edge implements edge_data {
 		destination = dest;
 		weight = w;
 	}
+	/**
+	 * 
+	 * @return
+	 */
+	public String toString() {
+		return ("edge("+source+", "+destination+", "+weight+")"); 
+	}
+	/**
+	 * 
+	 * @param e
+	 * @return
+	 */
+	public boolean equals(Object e) {
+		if(!(e instanceof Edge))
+			return false;
+		if(((Edge) e).destination != destination)
+			return false;
+		if(((Edge) e).info != info)
+			return false;
+		if(((Edge) e).source != source)
+			return false;
+		if(((Edge) e).tag != tag)
+			return false;
+		if(((Edge) e).weight != weight)
+			return false;
+		return true;
+	}
 	
 	@Override
 	public int getSrc() {

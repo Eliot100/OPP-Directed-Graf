@@ -1,5 +1,6 @@
 package dataStructure;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -8,7 +9,7 @@ import java.util.Iterator;
  * This class is implementation of directed graph.
  * @author Eli Ruvinov
  */
-public class DGraph implements graph{
+public class DGraph implements graph,Serializable{
 	public int lastId;
 	public int MC;
 	public HashMap<Integer, Node> nodeHash;
@@ -17,6 +18,7 @@ public class DGraph implements graph{
 
 	public DGraph(DGraph g) {
 		lastId = g.lastId;
+		MC = g.MC;
 		nodeHash = g.nodeHash;
 		data_nodeHash = g.data_nodeHash;
 		edgeHash = g.edgeHash;
@@ -65,6 +67,9 @@ public class DGraph implements graph{
 	public node_data getNode(int key) {
 		return nodeHash.get(key);
 	}
+	public Node getRealNode(int key) {
+		return nodeHash.get(key);
+	}
 
 	@Override
 	public edge_data getEdge(int src, int dest) {
@@ -73,8 +78,7 @@ public class DGraph implements graph{
 
 	@Override
 	public void addNode(node_data n) {
-		nodeHash.put(lastId, new Node( n.getKey(), n.getLocation(), 
-				n.getWeight(), n.getInfo(), n.getTag() ));
+		nodeHash.put(lastId, new Node( n.getKey(), n.getLocation(),  n.getWeight(), n.getInfo(), n.getTag() ));
 		data_nodeHash.put(n.getKey(), n);
 		lastId++;
 		MC++;
