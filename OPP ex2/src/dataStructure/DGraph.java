@@ -9,6 +9,7 @@ import java.util.Iterator;
  * This class is implementation of directed graph.
  * @author Eli Ruvinov
  */
+@SuppressWarnings("serial")
 public class DGraph implements graph,Serializable{
 	public int lastId;
 	public int MC;
@@ -16,6 +17,25 @@ public class DGraph implements graph,Serializable{
 	public HashMap<Integer, node_data> data_nodeHash;
 	public Hashtable<Integer, edge_data> edgeHash;
 
+	public DGraph( Collection<Node> c1, Collection<Edge> c2) {
+		int biggestID = -1; 
+		MC = 0;
+		Iterator<Node> nodeIter = c1.iterator();
+		while (nodeIter.hasNext()) {
+			Node NodeData = nodeIter.next();
+			nodeHash.put(NodeData.getKey(), NodeData);
+			data_nodeHash.put(NodeData.getKey(), NodeData);
+			if(NodeData.getKey() > biggestID)
+				biggestID = NodeData.getKey();
+		}
+		lastId = biggestID;
+		Iterator<Edge> edgeIter = c2.iterator();
+		while (edgeIter.hasNext()) {
+			Edge e = edgeIter.next();
+			this.connect(e.getSrc(), e.getDest(), e.getWeight());
+		}
+	}
+	
 	public DGraph(DGraph g) {
 		lastId = g.lastId;
 		MC = g.MC;
@@ -35,18 +55,18 @@ public class DGraph implements graph,Serializable{
 			if(NodeData.getKey() > biggestID)
 				biggestID = NodeData.getKey();
 		}
+		lastId = biggestID;
 		Iterator<edge_data> edgeIter = edgeHash.values().iterator();
 		while (edgeIter.hasNext()) {
 			edge_data edge = edgeIter.next();
 			this.connect(edge.getSrc(), edge.getDest(), edge.getWeight());
 			edgeHash.put(edge.getSrc(), edge);
 		}
-		lastId = biggestID;
 	}
-//	private Iterator<EdgeData> edgeIterator(){
+//	private Iterator<Edge> edgeIterator(){
 //		return edgeHash.values().iterator();
 //	}
-//	private Iterator<NodeData> nodeIterator(){
+//	private Iterator<Node> nodeIterator(){
 //		return nodeHash.values().iterator();
 //	}
 //	public int getNewId() {
@@ -86,11 +106,13 @@ public class DGraph implements graph,Serializable{
 
 	@Override
 	public void connect(int src, int dest, double w) {
-		Edge edge = new Edge(src, dest, w);
-		nodeHash.get(src).addDest(edge);
-		nodeHash.get(dest).addSource(edge);
-		edgeHash.put(edge.getSrc(), edge);
-		MC++;
+		Edge e = new Edge(src, dest, w);
+		if (nodeHash.get(e.getSrc()) != null && nodeHash.get(e.getDest()) != null ) {
+			nodeHash.get(src).addDest(e);
+			nodeHash.get(dest).addSource(e);
+			edgeHash.put(e.getSrc(), e);
+			MC++;
+		}
 	}
 
 	@Override

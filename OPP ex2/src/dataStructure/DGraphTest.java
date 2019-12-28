@@ -1,9 +1,15 @@
 package dataStructure;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 
 class DGraphTest {
+
+	@Test
+	void testDGraphCollectionOfNodeCollectionOfEdge() {
+		fail("Not yet implemented"); // TODO
+	}
 
 	@Test
 	void testDGraphDGraph() {
@@ -22,6 +28,11 @@ class DGraphTest {
 
 	@Test
 	void testGetNode() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	void testGetRealNode() {
 		fail("Not yet implemented"); // TODO
 	}
 
