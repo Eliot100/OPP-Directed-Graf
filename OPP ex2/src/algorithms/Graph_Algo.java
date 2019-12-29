@@ -75,7 +75,7 @@ public class Graph_Algo implements graph_algorithms{
 			if (!temp.getInfo().equals("Achieved"))
 					return false;
 		}
-		return this.could((Node) n);
+		return this.could(n);
 	}
 	/**
 	 * This function is sets all the nodes (that can by reached from n) infos to be "Achieved".
