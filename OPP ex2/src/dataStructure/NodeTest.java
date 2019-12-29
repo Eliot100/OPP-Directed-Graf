@@ -8,54 +8,6 @@ import utils.Point3D;
 class NodeTest {
 
 	@Test
-	void testFromIterator() {
-		System.out.println("***testFromIterator***");
-		Node n = new Node(0, new Point3D(0, 0, 0));
-		for (int i = 1; i < 11; i++) {
-			n.addSource(new Edge(0, i, i/2));
-			n.addDest(new Edge(-i, 0, i/2));
-		}
-		Iterator<edge_data> itr = n.fromIterator();
-		int i = 1;
-		while (itr.hasNext()) {
-			Edge edge = (Edge) itr.next();
-			System.out.println(edge);
-			assertEquals(edge, new Edge(0, i, i/2));
-			i++;
-		}
-		Iterator<edge_data> itr2 = n.fromIterator();
-		while (itr2.hasNext()) {
-			Edge edge = (Edge) itr.next();
-			assertNotEquals(edge, new Edge(0, (int) (Math.random()*100), Math.random()*10));
-			i++;
-		}
-	}
-
-	@Test
-	void testToIterator() {
-		System.out.println("***testToIterator***");
-		Node n = new Node(0, new Point3D(0, 0, 0));
-		for (int i = 1; i < 11; i++) {
-			n.addSource(new Edge(-i, 0, i/2));
-			n.addDest(new Edge(0, i, i/2));
-		}
-		Iterator<edge_data> itr = n.toIterator();
-		int i = 1;
-		while (itr.hasNext()) {
-			edge_data edge = itr.next();
-			System.out.println(edge);
-			assertEquals(edge, new Edge(-i, 0, (i/2)));
-			i++;
-		}
-		Iterator<edge_data> itr2 = n.toIterator();
-		while (itr2.hasNext()) {
-			edge_data edge = itr2.next();
-			assertNotEquals(edge, new Edge(0, (int) (Math.random()*100), Math.random()*10));
-			i++;
-		}
-	}
-
-	@Test
 	void testNodeKeyLocation() {
 		System.out.println("***testNodeKeyLocation***");
 		Node[] NodeArr = {new Node(0, new Point3D(0, 0, 0)), new Node(2, new Point3D(0, 2)), new Node(3, new Point3D(3, 2)),
@@ -68,67 +20,6 @@ class NodeTest {
 			assertEquals(NodeArr[i], NodeArr2[i]);
 			assertNotEquals(NodeArr[i], NotNodeArr[i]);
 		}
-	}
-
-	@Test
-	void testAddDest() {
-		System.out.println("***testAddDest***");
-		Node n = new Node(100, new Point3D(0, 0, 0));
-		n.addDest(new Edge(100, 1,  95));
-		n.addDest(new Edge(100, 50, 50.9));
-		assertEquals(n.getDestEdge(1), new Edge(100, 1,  95));
-		assertNotEquals(n.getDestEdge(50), new Edge(100, 50, 50));
-	}
-
-	@Test
-	void testRemoveFromThis() {
-		System.out.println("***testRemoveFromThis***");
-		Node n = new Node(0, new Point3D(0, 0, 0));  
-		Edge[] e = {new Edge(5, 0, 4), new Edge(2, 0, 1.5), new Edge(3, 0, 2), new Edge(4, 0, 3.5)};
-		for (int i = 0; i < e.length; i++) {
-			n.addDest(e[i]);
-			System.out.println("Edge before removing : "+e[i]);
-			n.removeFromThis(e[i]);
-			if (n.fromThis.get(e[i].getSrc()) != null)
-				fail("didn't remove : "+n.fromThis.get(e[i].getSrc()));
-		}
-	}
-
-	@Test
-	void testAddSource() {
-		System.out.println("***testAddSource***");
-		Node n = new Node(0, new Point3D(0, 0, 0));  
-		Edge[] e = {new Edge(5, 0, 4), new Edge(2, 0, 1.5), new Edge(3, 0, 2), new Edge(4, 0, 3.5)};
-		for (int i = 0; i < e.length; i++) {
-			n.addSource(e[i]);
-			assertEquals(n.toThis.get(e[i].getSrc()), e[i]);
-			assertNotEquals(n.toThis.get(e[i].getSrc()), e[(i+1)%e.length]);
-		}
-	}
-
-	@Test
-	void testRemoveToThis() {
-		System.out.println("***testRemoveToThis***");
-		Node n = new Node(0, new Point3D(0, 0, 0));  
-		Edge[] e = {new Edge(5, 0, 4), new Edge(2, 0, 1.5), new Edge(3, 0, 2), new Edge(4, 0, 3.5)};
-		for (int i = 0; i < e.length; i++) {
-			n.addSource(e[i]);
-			System.out.println("Edge before removing : "+e[i]);
-			n.removeToThis(e[i]);
-			if (n.toThis.get(e[i].getSrc()) != null)
-				fail("didn't remove : "+n.toThis.get(e[i].getSrc()));
-		}
-	}
-
-	@Test
-	void testGetDestEdge() {
-		System.out.println("***testGetDestEdge***");
-		Node n = new Node(0, new Point3D(0, 0, 0)); 
-		Edge e = new Edge(0, 5, 4);
-		n.addDest(e);
-		assertEquals(n.getDestEdge(5), e);
-		assertNotEquals(n.getDestEdge(3), e);
-		assertNotEquals(n.getDestEdge(5), new Edge(0, 5, 2));
 	}
 
 	@Test

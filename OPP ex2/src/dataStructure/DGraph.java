@@ -11,10 +11,10 @@ import java.util.Iterator;
  */
 @SuppressWarnings("serial")
 public class DGraph implements graph,Serializable{
-	int lastId;
-	int MC;
-	HashMap<Integer, node_data> nodeHash;
-	Hashtable<Integer, edge_data> edgeHash;
+	private int lastId;
+	private int MC;
+	private HashMap<Integer, node_data> nodeHash;
+	private HashMap<Integer, HashMap<Integer, edge_data>> edgeHash;
 	/**
 	 * TODO
 	 * @return
@@ -25,14 +25,14 @@ public class DGraph implements graph,Serializable{
 	}
 	/**
 	 * 
-	 * @param c1
-	 * @param c2
+	 * @param node_dataCollection
+	 * @param edge_dataCollection
 	 */
 	public DGraph( Collection<node_data> node_dataCollection, Collection<edge_data> edge_dataCollection) {
 		int biggestID = -1; 
 		MC = 0;
 		nodeHash = new HashMap<Integer, node_data>();
-		edgeHash = new Hashtable<Integer, edge_data>();
+		edgeHash = new HashMap<Integer, HashMap<Integer, edge_data>>();
 		Iterator<node_data> nodeIter = node_dataCollection.iterator();
 		while (nodeIter.hasNext()) {
 			Node NodeData = new Node(nodeIter.next());
@@ -76,27 +76,24 @@ public class DGraph implements graph,Serializable{
 	 * @param g
 	 */
 	public DGraph(graph g) {
-		int biggestID = -1; 
+		int biggestID = 0; 
 		MC = g.getMC();
+		nodeHash = new HashMap<Integer, node_data>();
+		edgeHash = new HashMap<Integer, HashMap<Integer, edge_data>>();
 		Iterator<node_data> nodeIter = g.getV().iterator(); 
 		while (nodeIter.hasNext()) {
 			node_data Node =  nodeIter.next();
 			nodeHash.put(Node.getKey(), Node);
+			edgeHash.put(Node.getKey(), new HashMap<Integer, edge_data>());
+			Iterator<edge_data> edgeIter = g.getE(Node.getKey()).iterator(); 
+			while (edgeIter.hasNext()) {
+				edge_data edge = edgeIter.next();
+				edgeHash.get(Node.getKey()).put(edge.getDest(), edge);
+			}
 			if(Node.getKey() > biggestID)
 				biggestID = Node.getKey();
 		}
 		lastId = biggestID;
-		Iterator<node_data> nodeIter2 = g.getV().iterator(); 
-		while (nodeIter2.hasNext()) {
-			node_data Node = nodeIter2.next();
-			Iterator<edge_data> edgeIter = g.getE(Node.getKey()).iterator();
-			while (edgeIter.hasNext()) {
-				edge_data edge = edgeIter.next();
-				this.connect(edge.getSrc(), edge.getDest(), edge.getWeight());
-				edgeHash.put(edge.getSrc(), edge);
-			}
-		}
-		
 	}
 	/**
 	 *  This is a constructor for a new empty DGraph (directed graph).
@@ -105,30 +102,31 @@ public class DGraph implements graph,Serializable{
 		lastId = 0;
 		MC = 0;
 		nodeHash = new HashMap<Integer, node_data>();
-		edgeHash = new Hashtable<Integer, edge_data>();
+		edgeHash = new HashMap<Integer, HashMap<Integer, edge_data>>();
 	}
 	
 	@Override
 	public node_data getNode(int key) {
 		return nodeHash.get(key);
 	}
-	/**
-	 * return the Node by the node_id,
-	 * @param key - the node_id
-	 * @return the Node by the node_id, null if none.
-	 */
-	public Node getRealNode(int key) {
-		return (Node) this.getNode(key);
-	}
+//	/**
+//	 * return the Node by the node_id,
+//	 * @param key - the node_id
+//	 * @return the Node by the node_id, null if none.
+//	 */
+//	public Node getRealNode(int key) {
+//		return (Node) this.getNode(key);
+//	}
 
 	@Override
 	public edge_data getEdge(int src, int dest) {
-		return this.getRealNode(src).getDestEdge(dest);
+		return edgeHash.get(src).get(dest);
 	}
 
 	@Override
 	public void addNode(node_data n) {
-		nodeHash.put(n.getKey(), new Node(n));
+		nodeHash.put(n.getKey(), n);
+		edgeHash.put(n.getKey(), new HashMap<Integer, edge_data>());
 		if(lastId < n.getKey())
 			lastId = n.getKey();
 		MC++;
@@ -138,9 +136,7 @@ public class DGraph implements graph,Serializable{
 	public void connect(int src, int dest, double w) {
 		Edge e = new Edge(src, dest, w);
 		if (nodeHash.get(e.getSrc()) != null && nodeHash.get(e.getDest()) != null ) {
-			this.getRealNode(src).addDest(e);
-			this.getRealNode(dest).addSource(e);
-			edgeHash.put(e.getSrc(), e);
+			edgeHash.get(e.getSrc()).put(dest, e);
 		}
 		MC++;
 	}
@@ -152,32 +148,25 @@ public class DGraph implements graph,Serializable{
 
 	@Override
 	public Collection<edge_data> getE(int node_id) {
-		return this.getRealNode(node_id).getV();
+		return edgeHash.get(node_id).values();
 	}
 
 	@Override
 	public node_data removeNode(int key) {
 		MC++;
-		Iterator<edge_data> fromItr = this.getRealNode(key).fromIterator();
-		while(fromItr.hasNext()) {
-			Edge edge = (Edge) fromItr.next(); 
-			this.getRealNode(edge.getDest()).toThis.remove(edge.getSrc());
-		}
-		Iterator<edge_data> toItr = this.getRealNode(key).toIterator();
-		while(toItr.hasNext()) {
-			Edge edge = (Edge) toItr.next(); 
-			this.getRealNode(edge.getSrc()).fromThis.remove(edge.getDest());
+		edgeHash.remove(key);
+		Iterator<HashMap<Integer, edge_data>> itr = edgeHash.values().iterator();
+		while (itr.hasNext()) {
+			HashMap<Integer, edge_data> hashMap = itr.next();
+			hashMap.remove(key);
 		}
 		return nodeHash.remove(key);
 	}
 
 	@Override
 	public edge_data removeEdge(int src, int dest) {
-		MC++;
-		Edge edge = (Edge) this.getRealNode(src).getDestEdge(dest);
-		this.getRealNode(src).removeFromThis(edge);
-		this.getRealNode(dest).removeToThis(edge);
-		return this.edgeHash.remove(dest);
+		MC++; 
+		return edgeHash.get(src).remove(dest);
 	}
 
 	@Override

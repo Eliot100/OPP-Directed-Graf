@@ -1,8 +1,5 @@
 package dataStructure;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import utils.Point3D;
 /**
  * This class is represent the Node in the directed graph.
@@ -14,8 +11,8 @@ public class Node implements node_data  {
 	private double weight;
 	private String info;
 	private int tag;
-	public HashMap <Integer, edge_data> fromThis;
-	public HashMap <Integer, edge_data> toThis;
+//	public HashMap <Integer, edge_data> fromThis;
+//	public HashMap <Integer, edge_data> toThis;
 	/**
 	 * 
 	 */
@@ -32,32 +29,32 @@ public class Node implements node_data  {
 			return false;
 		if(((Node) n).info != info)
 			return false;
-		Iterator<edge_data> itr = ((Node) n).fromIterator();
-		while (itr.hasNext()) {
-			edge_data edge = itr.next();
-			if(!edge.equals(this.fromThis.get(edge.getDest())))
-				return false;
-		}
-		Iterator<edge_data> itr2 = ((Node) n).toIterator();
-		while (itr2.hasNext()) {
-			edge_data edge = itr2.next();
-			if(!edge.equals(this.fromThis.get(edge.getSrc())))
-				return false;
-		}
+//		Iterator<edge_data> itr = ((Node) n).fromIterator();
+//		while (itr.hasNext()) {
+//			edge_data edge = itr.next();
+//			if(!edge.equals(this.fromThis.get(edge.getDest())))
+//				return false;
+//		}
+//		Iterator<edge_data> itr2 = ((Node) n).toIterator();
+//		while (itr2.hasNext()) {
+//			edge_data edge = itr2.next();
+//			if(!edge.equals(this.fromThis.get(edge.getSrc())))
+//				return false;
+//		}
 		return true;
 	}
-	/**
-	 * @return Iterator on the edges that exit from this Node.
-	 */
-	Iterator<edge_data> fromIterator(){
-		return fromThis.values().iterator();
-	}
-	/**
-	 * @return Iterator on the edges that enter to this Node.
-	 */
-	Iterator<edge_data> toIterator(){
-		return toThis.values().iterator();
-	}
+//	/**
+//	 * @return Iterator on the edges that exit from this Node.
+//	 */
+//	Iterator<edge_data> fromIterator(){
+//		return fromThis.values().iterator();
+//	}
+//	/**
+//	 * @return Iterator on the edges that enter to this Node.
+//	 */
+//	Iterator<edge_data> toIterator(){
+//		return toThis.values().iterator();
+//	}
 	/**
 	 * This is a constructor for a Node.
 	 */
@@ -67,13 +64,13 @@ public class Node implements node_data  {
 		this.info = "";
 		this.tag = new Integer(0);
 		this.weight = new Double(0.0);
-		this.fromThis = new HashMap<Integer,edge_data>();
-		this.toThis = new HashMap<Integer,edge_data>();
+//		this.fromThis = new HashMap<Integer,edge_data>();
+//		this.toThis = new HashMap<Integer,edge_data>();
 	}
 	
-	public Collection<edge_data> getV() {
-		return fromThis.values();
-	}
+//	public Collection<edge_data> getV() {
+//		return fromThis.values();
+//	}
 	/**
 	 * This is a constructor for a Node.
 	 */
@@ -83,8 +80,8 @@ public class Node implements node_data  {
 		this.weight = weight;
 		this.info = info;
 		this.tag = tag;
-		this.fromThis = new HashMap<Integer,edge_data>();
-		this.toThis = new HashMap<Integer,edge_data>();
+//		this.fromThis = new HashMap<Integer,edge_data>();
+//		this.toThis = new HashMap<Integer,edge_data>();
 	}
 	/**
 	 * 
@@ -96,50 +93,50 @@ public class Node implements node_data  {
 		this.location = n.getLocation();
 		this.tag = n.getTag();
 		this.weight = n.getWeight();
-		fromThis = new HashMap<Integer,edge_data>();
-		toThis = new HashMap<Integer,edge_data>();
+//		fromThis = new HashMap<Integer,edge_data>();
+//		toThis = new HashMap<Integer,edge_data>();
 	}
-	/**
-	 * This function is adding an edge that enter this Node. 
-	 * @param edge - Edge which you want to add.
-	 */
-	public void addDest(Edge edge) {
-		if(edge.getSrc() == this.getKey()) {
-			fromThis.put(edge.getDest(), edge);
-		}
-	}
-	/**
-	 * This returning the edge between this Node and the destination
-	 * @param dest - Integer that represent the destination.
-	 * @return an edge from this Node to the destination. 
-	 */
-	public edge_data getDestEdge(int dest) {
-		return this.fromThis.get(dest);
-	}
-	/**
-	 * This function is adding an edge that enter this Node. 
-	 * @param edge - Edge which you want to add.
-	 */
-	public void addSource(Edge edge) {
-		if(edge.getDest() == this.getKey())
-			this.toThis.put(edge.getSrc(), edge);
-	}
-	/**
-	 * This function is removing an edge that exit this Node. 
-	 * @param edge - Edge which you want to remove.
-	 */
-	public void removeFromThis(Edge edge) {
-		if(edge.getDest() == this.getKey())
-			this.fromThis.remove(edge.getDest());
-	}
-	/**
-	 * This function is removing an edge that enter this Node.
-	 * @param edge - Edge which you want to remove.
-	 */
-	public void removeToThis(Edge edge) {
-		if(edge.getDest() == this.getKey())
-			this.toThis.remove(edge.getSrc());
-	}
+//	/**
+//	 * This function is adding an edge that enter this Node. 
+//	 * @param edge - Edge which you want to add.
+//	 */
+//	public void addDest(Edge edge) {
+//		if(edge.getSrc() == this.getKey()) {
+//			fromThis.put(edge.getDest(), edge);
+//		}
+//	}
+//	/**
+//	 * This returning the edge between this Node and the destination
+//	 * @param dest - Integer that represent the destination.
+//	 * @return an edge from this Node to the destination. 
+//	 */
+//	public edge_data getDestEdge(int dest) {
+//		return this.fromThis.get(dest);
+//	}
+//	/**
+//	 * This function is adding an edge that enter this Node. 
+//	 * @param edge - Edge which you want to add.
+//	 */
+//	public void addSource(Edge edge) {
+//		if(edge.getDest() == this.getKey())
+//			this.toThis.put(edge.getSrc(), edge);
+//	}
+//	/**
+//	 * This function is removing an edge that exit this Node. 
+//	 * @param edge - Edge which you want to remove.
+//	 */
+//	public void removeFromThis(Edge edge) {
+//		if(edge.getDest() == this.getKey())
+//			this.fromThis.remove(edge.getDest());
+//	}
+//	/**
+//	 * This function is removing an edge that enter this Node.
+//	 * @param edge - Edge which you want to remove.
+//	 */
+//	public void removeToThis(Edge edge) {
+//		if(edge.getDest() == this.getKey())
+//			this.toThis.remove(edge.getSrc());
+//	}
 	
 	@Override
 	public int getKey() {
