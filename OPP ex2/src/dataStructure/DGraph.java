@@ -3,7 +3,6 @@ package dataStructure;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 /**
  * This class is implementation of directed graph.
@@ -134,9 +133,9 @@ public class DGraph implements graph,Serializable{
 
 	@Override
 	public void connect(int src, int dest, double w) {
-		Edge e = new Edge(src, dest, w);
-		if (nodeHash.get(e.getSrc()) != null && nodeHash.get(e.getDest()) != null ) {
-			edgeHash.get(e.getSrc()).put(dest, e);
+		if (nodeHash.get(src) != null && nodeHash.get(dest) != null ) {
+			Edge e = new Edge(src, dest, w);
+			edgeHash.get(src).put(dest, e);
 		}
 		MC++;
 	}

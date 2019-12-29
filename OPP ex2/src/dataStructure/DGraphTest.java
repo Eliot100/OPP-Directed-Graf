@@ -3,12 +3,10 @@ package dataStructure;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
-
 import org.junit.jupiter.api.Test;
-
 import utils.Point3D;
 
 class DGraphTest {
@@ -40,19 +38,19 @@ class DGraphTest {
 	@Test
 	void testDGraphCollectionOfNodeCollectionOfEdge() {
 		System.out.println("***testDGraphCollectionOfNodeCollectionOfEdge***");
-		HashMap<Integer, node_data> nodeHash = new HashMap<Integer, node_data>();
-		Hashtable<Integer, edge_data> edgeHash = new Hashtable<Integer, edge_data>();
+		ArrayList<node_data> nodes = new ArrayList<node_data>();
+		ArrayList<edge_data> edges = new ArrayList< edge_data>();
 		for (int i = -10; i < 11; i++) {
-			nodeHash.put(i, new Node(i, new Point3D(i, i*(1/2))));
+			nodes.add(new Node(i, new Point3D(i, i*(1/2))));
 		}  
-		Iterator<node_data> it = nodeHash.values().iterator();
+		Iterator<node_data> it = nodes.iterator();
 		while (it.hasNext()) {
-			Node n = (Node) it.next();
+			node_data n = it.next();
 			if (n.getKey() != 0) {
-				edgeHash.put(n.getKey(), new Edge(n.getKey(), 0, Math.abs(n.getKey())));
+				edges.add(new Edge(n.getKey(), 0, Math.abs(n.getKey()) ) );
 			}
 		}
-		DGraph g = new DGraph(nodeHash.values(), edgeHash.values());
+		DGraph g = new DGraph(nodes, edges);
 		System.out.println(g.edgeSize()+" = "+20);
 		assertEquals(g.edgeSize() , 20);
 		g.removeNode(0);
@@ -60,7 +58,7 @@ class DGraphTest {
 		assertEquals(g.edgeSize() , 0);
 		System.out.println(g.nodeSize()+" = "+19);
 		assertEquals(g.nodeSize() , 19);
-		assertNotEquals(g.edgeSize(), edgeHash.size());
+		assertNotEquals(g.edgeSize(), edges.size());
 	}
 
 	@Test
@@ -94,7 +92,14 @@ class DGraphTest {
 	@Test
 	void testGetNodeAndAddNode() {
 		System.out.println("***testGetNodeAndAddNode***");
-		fail("Not yet implemented"); // TODO
+		DGraph g = new DGraph();
+		for (int i = 0; i < 100; i+=5) {
+			Node n = new Node(i, new Point3D(i, i+5));
+			g.addNode(n);
+			assertEquals(g.getNode(i), n);
+			assertNotEquals(g.getNode(i), new Node(i, new Point3D(i, i)));
+		}
+		assertEquals(g.getV().size(), 20);
 	}
 
 	@Test

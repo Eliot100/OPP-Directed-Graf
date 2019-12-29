@@ -14,8 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import com.google.gson.Gson;
 import dataStructure.DGraph;
-import dataStructure.Edge;
-import dataStructure.Node;
 import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
@@ -74,11 +72,14 @@ public class Graph_Algo implements graph_algorithms{
 			node_data temp = itr.next();
 			if (!temp.getInfo().equals("Achieved"))
 					return false;
+			if (this.shortestPath(temp.getKey(), n.getKey()) == null) {
+				return false;
+			}
 		}
-		return this.could(n);
+		return true;
 	}
 	/**
-	 * This function is sets all the nodes (that can by reached from n) infos to be "Achieved".
+	 * This function is sets all the nodes, that can by reached from n, infos to be "Achieved".
 	 * @param n - is the start node_data. 
 	 */
 	private void achivedAll(node_data n) {
@@ -89,43 +90,24 @@ public class Graph_Algo implements graph_algorithms{
 			}
 		}
 	}
-	/**
-	 * @return true if it possible to reached to n from all the Nodes in the DGraph g, else false.
-	 * @param n - the node that we want to check if it possible to reached from all the Nodes in the DGraph g.
-	 */
-	private boolean could(Node n) {
-		n.setInfo("could");
-		for (Iterator<edge_data> iterator = n.toThis.values().iterator(); iterator.hasNext();) {
-			Edge e = (Edge) iterator.next();
-			Node could = g.getRealNode(e.getSrc());
-			if(!could.getInfo().equals("could")) {
-				could.setInfo("could");
-				this.could(could);
-			}
-		}
-		for (node_data node : g.getV()) {
-			if(!node.getInfo().equals("could"))
-				return false;
-		}
-		return true;
-	}
 
 	@Override
 	public double shortestPathDist(int src, int dest) {
 		LinkedList<node_data> path = (LinkedList<node_data>) this.shortestPath(src, dest);
-		double sum = 0;
+		if (path == null) {
+			throw new RuntimeException("It isn't posibol to Reache dest node from src node");
+		}
 		Iterator<node_data> iterator = path.iterator();
 		node_data lastNode_data; 
 		if(iterator.hasNext()) {
 			lastNode_data = (node_data) iterator.next();
-			sum += lastNode_data.getWeight();
 		}
 		else
 			return 0;
-		while ( iterator.hasNext()) {
+		double sum = 0;
+		while ( iterator.hasNext() ) {
 			node_data node_data = (node_data) iterator.next();
-			sum += node_data.getWeight();
-			sum += this.g.getRealNode(lastNode_data.getKey()).fromThis.get(node_data.getKey()).getWeight();
+			sum += g.getEdge(lastNode_data.getKey(), node_data.getKey()).getWeight();
 			lastNode_data =node_data;
 		}
 		return sum;
@@ -133,35 +115,59 @@ public class Graph_Algo implements graph_algorithms{
 
 	@Override
 	public List<node_data> shortestPath(int src, int dest) {
-		Node source = (Node) g.getNode(src);
-		Node destanation = (Node) g.getNode(dest);
+		node_data source = g.getNode(src);
+		node_data destanation = g.getNode(dest);
 		if(source == null || destanation == null)
 			return null;
-		HashMap<Integer, Node> hasReached = new HashMap<Integer, Node>();
+//		HashMap<Integer, node_data> hasReached = new HashMap<Integer, node_data>();
 		HashMap<Integer, LinkedList<node_data>> pathes = new HashMap<Integer, LinkedList<node_data>>();
-		ArrayList<Node> onEdge = new ArrayList<Node>();
-		onEdge.add(source);
+		ArrayList<Integer> onEdge = new ArrayList<Integer>();
+		onEdge.add(source.getKey());
+		pathes.put(source.getKey(), new LinkedList<node_data>());
+		pathes.get(source.getKey()).add(source);
 		for (Iterator<node_data> iterator = g.getV().iterator(); iterator.hasNext();) {
-			Node node = (Node) iterator.next();
-			node.setTag(node.fromThis.size());
+			node_data node = iterator.next();
+			node.setInfo("notReached");
+			node.setTag(g.getE(node.getKey()).size());
 		}
 		while (!onEdge.isEmpty()) {
 			edge_data minWeight = null;
-			for (Iterator<Node> iterator = onEdge.iterator(); iterator.hasNext();) {
-				Node node = iterator.next();
-				Iterator<edge_data> itr = node.fromThis.values().iterator();
+			for (Iterator<Integer> iterator = onEdge.iterator(); iterator.hasNext();) {
+				node_data node = g.getNode(iterator.next());
+				Iterator<edge_data> itr = g.getE(node.getKey()).iterator();
 				while (itr.hasNext()) {
-					Edge e = (Edge) itr.next();
-					if (hasReached.get(e.getDest()) != null)
+					edge_data e = itr.next();
+					if (g.getNode(e.getDest()).getInfo() == "Reached")
 						continue;
 					if (minWeight == null || minWeight.getWeight() > e.getWeight() )
 						minWeight = e;
 				}
 			}
-			
-			// TODO Auto-generated method stub
+			if (minWeight == null)
+				return null;
+			pathes.put(minWeight.getDest(), copyAndAdd(pathes.get(minWeight.getSrc()), g.getNode(minWeight.getDest()) ));
+			if(minWeight.getDest() == dest)
+				return pathes.get(minWeight.getDest());
+			g.getNode(minWeight.getDest()).setInfo("Reached");
+			g.getNode(minWeight.getSrc()).setTag(g.getNode(minWeight.getSrc()).getTag()-1);
+			if (g.getNode(minWeight.getSrc()).getTag() == 0) {
+				onEdge.remove(minWeight.getSrc());
+			}
 		}
 		return null;
+	}
+	/** TODO
+	 * @param path 
+	 * @param n
+	 * @return
+	 */
+	private static LinkedList<node_data> copyAndAdd(LinkedList<node_data> path, node_data n){
+		LinkedList<node_data> newPath = new LinkedList<node_data>();
+		for (Iterator<node_data> iter = path.iterator(); iter.hasNext();) {
+			newPath.add(iter.next()); 
+		}
+		newPath.add(n); 
+		return newPath;
 	}
 
 	@Override
