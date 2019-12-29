@@ -15,17 +15,17 @@ class NodeTest {
 			n.addSource(new Edge(0, i, i/2));
 			n.addDest(new Edge(-i, 0, i/2));
 		}
-		Iterator<Edge> itr = n.fromIterator();
+		Iterator<edge_data> itr = n.fromIterator();
 		int i = 1;
 		while (itr.hasNext()) {
-			Edge edge = itr.next();
+			Edge edge = (Edge) itr.next();
 			System.out.println(edge);
 			assertEquals(edge, new Edge(0, i, i/2));
 			i++;
 		}
-		Iterator<Edge> itr2 = n.fromIterator();
+		Iterator<edge_data> itr2 = n.fromIterator();
 		while (itr2.hasNext()) {
-			Edge edge = itr.next();
+			Edge edge = (Edge) itr.next();
 			assertNotEquals(edge, new Edge(0, (int) (Math.random()*100), Math.random()*10));
 			i++;
 		}
@@ -39,17 +39,17 @@ class NodeTest {
 			n.addSource(new Edge(-i, 0, i/2));
 			n.addDest(new Edge(0, i, i/2));
 		}
-		Iterator<Edge> itr = n.toIterator();
+		Iterator<edge_data> itr = n.toIterator();
 		int i = 1;
 		while (itr.hasNext()) {
-			Edge edge = itr.next();
+			edge_data edge = itr.next();
 			System.out.println(edge);
 			assertEquals(edge, new Edge(-i, 0, (i/2)));
 			i++;
 		}
-		Iterator<Edge> itr2 = n.toIterator();
+		Iterator<edge_data> itr2 = n.toIterator();
 		while (itr2.hasNext()) {
-			Edge edge = itr2.next();
+			edge_data edge = itr2.next();
 			assertNotEquals(edge, new Edge(0, (int) (Math.random()*100), Math.random()*10));
 			i++;
 		}

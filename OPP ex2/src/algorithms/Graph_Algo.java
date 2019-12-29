@@ -95,8 +95,8 @@ public class Graph_Algo implements graph_algorithms{
 	 */
 	private boolean could(Node n) {
 		n.setInfo("could");
-		for (Iterator<Edge> iterator = n.toThis.values().iterator(); iterator.hasNext();) {
-			Edge e = iterator.next();
+		for (Iterator<edge_data> iterator = n.toThis.values().iterator(); iterator.hasNext();) {
+			Edge e = (Edge) iterator.next();
 			Node could = g.getRealNode(e.getSrc());
 			if(!could.getInfo().equals("could")) {
 				could.setInfo("could");
@@ -146,12 +146,12 @@ public class Graph_Algo implements graph_algorithms{
 			node.setTag(node.fromThis.size());
 		}
 		while (!onEdge.isEmpty()) {
-			Edge minWeight = null;
+			edge_data minWeight = null;
 			for (Iterator<Node> iterator = onEdge.iterator(); iterator.hasNext();) {
 				Node node = iterator.next();
-				Iterator<Edge> itr = node.fromThis.values().iterator();
+				Iterator<edge_data> itr = node.fromThis.values().iterator();
 				while (itr.hasNext()) {
-					Edge e = itr.next();
+					Edge e = (Edge) itr.next();
 					if (hasReached.get(e.getDest()) != null)
 						continue;
 					if (minWeight == null || minWeight.getWeight() > e.getWeight() )

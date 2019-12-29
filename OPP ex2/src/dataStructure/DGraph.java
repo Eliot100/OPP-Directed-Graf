@@ -15,6 +15,10 @@ public class DGraph implements graph,Serializable{
 	int MC;
 	HashMap<Integer, node_data> nodeHash;
 	Hashtable<Integer, edge_data> edgeHash;
+	/**
+	 * TODO
+	 * @return
+	 */
 	public int newId() {
 		lastId++;
 		return lastId;
@@ -27,6 +31,8 @@ public class DGraph implements graph,Serializable{
 	public DGraph( Collection<node_data> node_dataCollection, Collection<edge_data> edge_dataCollection) {
 		int biggestID = -1; 
 		MC = 0;
+		nodeHash = new HashMap<Integer, node_data>();
+		edgeHash = new Hashtable<Integer, edge_data>();
 		Iterator<node_data> nodeIter = node_dataCollection.iterator();
 		while (nodeIter.hasNext()) {
 			Node NodeData = new Node(nodeIter.next());
@@ -45,19 +51,19 @@ public class DGraph implements graph,Serializable{
 	 *  This is a constructor for a DGraph from a DGraph.
 	 * @param g - the DGraph which 
 	 */
-	public DGraph copy(DGraph g) {
+	public DGraph copy() {
 		DGraph d = new DGraph();
-		d.lastId = g.lastId;
-		d.MC = g.MC;
-		Iterator<node_data> nodeIter = g.nodeHash.values().iterator();
+		d.lastId = this.lastId;
+		d.MC = this.MC;
+		Iterator<node_data> nodeIter = this.nodeHash.values().iterator();
 		while (nodeIter.hasNext()) {
 			Node Node = (Node) nodeIter.next();
 			d.nodeHash.put(Node.getKey(), Node);
 		}
-		Iterator<node_data> nodeIter2 = g.getV().iterator(); 
+		Iterator<node_data> nodeIter2 = this.getV().iterator(); 
 		while (nodeIter2.hasNext()) {
 			Node Node = new Node( nodeIter2.next());
-			Iterator<edge_data> edgeIter = g.getE(Node.getKey()).iterator();
+			Iterator<edge_data> edgeIter = this.getE(Node.getKey()).iterator();
 			while (edgeIter.hasNext()) {
 				edge_data edge = edgeIter.next();
 				d.connect(edge.getSrc(), edge.getDest(), edge.getWeight());
@@ -74,7 +80,7 @@ public class DGraph implements graph,Serializable{
 		MC = g.getMC();
 		Iterator<node_data> nodeIter = g.getV().iterator(); 
 		while (nodeIter.hasNext()) {
-			Node Node = new Node( nodeIter.next());
+			node_data Node =  nodeIter.next();
 			nodeHash.put(Node.getKey(), Node);
 			if(Node.getKey() > biggestID)
 				biggestID = Node.getKey();
@@ -82,7 +88,7 @@ public class DGraph implements graph,Serializable{
 		lastId = biggestID;
 		Iterator<node_data> nodeIter2 = g.getV().iterator(); 
 		while (nodeIter2.hasNext()) {
-			Node Node = new Node( nodeIter2.next());
+			node_data Node = nodeIter2.next();
 			Iterator<edge_data> edgeIter = g.getE(Node.getKey()).iterator();
 			while (edgeIter.hasNext()) {
 				edge_data edge = edgeIter.next();
@@ -112,7 +118,7 @@ public class DGraph implements graph,Serializable{
 	 * @return the Node by the node_id, null if none.
 	 */
 	public Node getRealNode(int key) {
-		return this.getRealNode(key);
+		return (Node) this.getNode(key);
 	}
 
 	@Override
@@ -122,8 +128,9 @@ public class DGraph implements graph,Serializable{
 
 	@Override
 	public void addNode(node_data n) {
-		nodeHash.put(lastId, new Node( n));
-		lastId++;
+		nodeHash.put(n.getKey(), new Node(n));
+		if(lastId < n.getKey())
+			lastId = n.getKey();
 		MC++;
 	}
 
@@ -134,8 +141,8 @@ public class DGraph implements graph,Serializable{
 			this.getRealNode(src).addDest(e);
 			this.getRealNode(dest).addSource(e);
 			edgeHash.put(e.getSrc(), e);
-			MC++;
 		}
+		MC++;
 	}
 
 	@Override
@@ -145,20 +152,20 @@ public class DGraph implements graph,Serializable{
 
 	@Override
 	public Collection<edge_data> getE(int node_id) {
-		return edgeHash.values();
+		return this.getRealNode(node_id).getV();
 	}
 
 	@Override
 	public node_data removeNode(int key) {
 		MC++;
-		Iterator<Edge> fromItr = ((Node) nodeHash.get(key)).fromIterator();
+		Iterator<edge_data> fromItr = this.getRealNode(key).fromIterator();
 		while(fromItr.hasNext()) {
-			Edge edge = fromItr.next(); 
+			Edge edge = (Edge) fromItr.next(); 
 			this.getRealNode(edge.getDest()).toThis.remove(edge.getSrc());
 		}
-		Iterator<Edge> toItr = ((Node) nodeHash.get(key)).toIterator();
+		Iterator<edge_data> toItr = this.getRealNode(key).toIterator();
 		while(toItr.hasNext()) {
-			Edge edge = toItr.next(); 
+			Edge edge = (Edge) toItr.next(); 
 			this.getRealNode(edge.getSrc()).fromThis.remove(edge.getDest());
 		}
 		return nodeHash.remove(key);
@@ -167,10 +174,10 @@ public class DGraph implements graph,Serializable{
 	@Override
 	public edge_data removeEdge(int src, int dest) {
 		MC++;
-		Edge edge = this.getRealNode(src).getDestEdge(dest);
+		Edge edge = (Edge) this.getRealNode(src).getDestEdge(dest);
 		this.getRealNode(src).removeFromThis(edge);
 		this.getRealNode(dest).removeToThis(edge);
-		return edge;
+		return this.edgeHash.remove(dest);
 	}
 
 	@Override

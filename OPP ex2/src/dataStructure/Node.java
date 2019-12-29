@@ -1,5 +1,6 @@
 package dataStructure;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import utils.Point3D;
@@ -13,8 +14,8 @@ public class Node implements node_data  {
 	private double weight;
 	private String info;
 	private int tag;
-	public HashMap <Integer, Edge> fromThis;
-	public HashMap <Integer, Edge> toThis;
+	public HashMap <Integer, edge_data> fromThis;
+	public HashMap <Integer, edge_data> toThis;
 	/**
 	 * 
 	 */
@@ -31,15 +32,15 @@ public class Node implements node_data  {
 			return false;
 		if(((Node) n).info != info)
 			return false;
-		Iterator<Edge> itr = ((Node) n).fromIterator();
+		Iterator<edge_data> itr = ((Node) n).fromIterator();
 		while (itr.hasNext()) {
-			Edge edge = itr.next();
+			edge_data edge = itr.next();
 			if(!edge.equals(this.fromThis.get(edge.getDest())))
 				return false;
 		}
-		Iterator<Edge> itr2 = ((Node) n).toIterator();
+		Iterator<edge_data> itr2 = ((Node) n).toIterator();
 		while (itr2.hasNext()) {
-			Edge edge = itr2.next();
+			edge_data edge = itr2.next();
 			if(!edge.equals(this.fromThis.get(edge.getSrc())))
 				return false;
 		}
@@ -48,13 +49,13 @@ public class Node implements node_data  {
 	/**
 	 * @return Iterator on the edges that exit from this Node.
 	 */
-	Iterator<Edge> fromIterator(){
+	Iterator<edge_data> fromIterator(){
 		return fromThis.values().iterator();
 	}
 	/**
 	 * @return Iterator on the edges that enter to this Node.
 	 */
-	Iterator<Edge> toIterator(){
+	Iterator<edge_data> toIterator(){
 		return toThis.values().iterator();
 	}
 	/**
@@ -66,6 +67,12 @@ public class Node implements node_data  {
 		this.info = "";
 		this.tag = new Integer(0);
 		this.weight = new Double(0.0);
+		this.fromThis = new HashMap<Integer,edge_data>();
+		this.toThis = new HashMap<Integer,edge_data>();
+	}
+	
+	public Collection<edge_data> getV() {
+		return fromThis.values();
 	}
 	/**
 	 * This is a constructor for a Node.
@@ -76,30 +83,37 @@ public class Node implements node_data  {
 		this.weight = weight;
 		this.info = info;
 		this.tag = tag;
+		this.fromThis = new HashMap<Integer,edge_data>();
+		this.toThis = new HashMap<Integer,edge_data>();
 	}
+	/**
+	 * 
+	 * @param n
+	 */
 	public Node(node_data n) {
 		this.info = n.getInfo();
 		this.key = n.getKey();
 		this.location = n.getLocation();
 		this.tag = n.getTag();
 		this.weight = n.getWeight();
-		this.fromThis = new HashMap<Integer,Edge>();
-		this.toThis = new HashMap<Integer,Edge>();
+		fromThis = new HashMap<Integer,edge_data>();
+		toThis = new HashMap<Integer,edge_data>();
 	}
 	/**
 	 * This function is adding an edge that enter this Node. 
 	 * @param edge - Edge which you want to add.
 	 */
 	public void addDest(Edge edge) {
-		if(edge.getSrc() == this.getKey())
+		if(edge.getSrc() == this.getKey()) {
 			fromThis.put(edge.getDest(), edge);
+		}
 	}
 	/**
 	 * This returning the edge between this Node and the destination
 	 * @param dest - Integer that represent the destination.
 	 * @return an edge from this Node to the destination. 
 	 */
-	public Edge getDestEdge(int dest) {
+	public edge_data getDestEdge(int dest) {
 		return this.fromThis.get(dest);
 	}
 	/**
