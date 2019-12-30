@@ -3,16 +3,27 @@ package dataStructure;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import utils.Point3D;
 /**
  * This class is implementation of directed graph.
  * @author Eli Ruvinov
  */
-public class  DGraph implements graph {
+public class DGraph implements graph {
 	private int lastId;
 	private int MC;
 	private HashMap<Integer, node_data> nodeHash;
 	private HashMap<Integer, HashMap<Integer, edge_data>> edgeHash;
 	private int edgeHashSize;
+	
+//	public DGraph(int lastId, int MC, HashMap<Integer, node_data> nodeHash, 
+//			HashMap<Integer, HashMap<Integer, edge_data>> edgeHash, int edgeHashSize) {
+//		this.lastId = lastId;
+//		this.MC = MC;
+//		this.nodeHash = nodeHash;
+//		this.edgeHash = edgeHash;
+//		this.edgeHashSize = edgeHashSize;
+//	}
 	/**
 	 * TODO
 	 * @return
@@ -20,6 +31,29 @@ public class  DGraph implements graph {
 	public int newId() {
 		lastId++;
 		return lastId;
+	}
+	
+	public static DGraph main(int action) {
+		DGraph d = new DGraph();
+		if(action == 1) {
+			for (int i = 0; i < 1000; i++) {
+				if(i%2 == 1)
+					d.addNode(new Node(d.newId(), new Point3D(0, i)));
+				else
+					d.addNode(new Node(d.newId(), new Point3D(i, 0)));
+			}
+			for (int i = 1; i < 1000; i++) {
+				d.connect(i, i+1, 1);
+			}
+		} else {
+			for (int i = 0; i < 100; i++) {
+				d.addNode(new Node( i, new Point3D(i, i)));
+			}
+			for (int i = 0; i < 100; i++) {
+				d.connect(i, i+1, i/2);
+			}
+		}
+		return d;
 	}
 //	/**
 //	 * 
@@ -106,6 +140,27 @@ public class  DGraph implements graph {
 		MC = 0;
 		nodeHash = new HashMap<Integer, node_data>();
 		edgeHash = new HashMap<Integer, HashMap<Integer, edge_data>>();
+	}
+	
+	public DGraph(int lastId, int MC, HashMap<Integer, Node> nodeHash, HashMap<Integer, HashMap<Integer, Edge>> edgeHash, int edgeHashSize) {
+		this.lastId = lastId;
+		this.MC = MC;
+		this.edgeHashSize = edgeHashSize;
+		this.nodeHash = new HashMap<Integer, node_data>();
+		this.edgeHash = new HashMap<Integer, HashMap<Integer, edge_data>> ();
+		for (node_data node : nodeHash.values()) {
+			System.out.println(node.getLocation());
+			this.nodeHash.put(node.getKey(), node);
+			System.out.println(nodeHash.get(node.getKey()).getLocation());
+			this.edgeHash.put(node.getKey(), new HashMap<Integer, edge_data>());
+			edgeHash.get(node.getKey());
+			for (edge_data edge : edgeHash.get(node.getKey()).values()) {
+				System.out.println(edge);
+				this.edgeHash.get(edge.getSrc()).put(edge.getDest(), edge);
+
+				System.out.println(this.getEdge(edge.getSrc(), edge.getDest()));
+			}
+		}
 	}
 	
 	@Override

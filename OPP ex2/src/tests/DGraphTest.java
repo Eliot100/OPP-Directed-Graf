@@ -1,10 +1,16 @@
-package dataStructure;
+package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.ZonedDateTime;
 import java.util.Iterator;
 import org.junit.jupiter.api.Test;
+
+import dataStructure.DGraph;
+import dataStructure.Edge;
+import dataStructure.Node;
+import dataStructure.edge_data;
+import dataStructure.node_data;
 import utils.Point3D;
 
 class DGraphTest {

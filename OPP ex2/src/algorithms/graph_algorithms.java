@@ -31,8 +31,8 @@ public interface graph_algorithms {
 	 * @param file_name
 	 */
 	public void init(String file_name);
-	/** Saves the graph to a file.
-	 * 
+	/**
+	 * Saves the graph to a file.
 	 * @param file_name
 	 */
 	public void save(String file_name);

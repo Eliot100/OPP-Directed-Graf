@@ -1,7 +1,9 @@
-package dataStructure;
+package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+
+import dataStructure.Node;
 import utils.Point3D;
 
 class NodeTest {
