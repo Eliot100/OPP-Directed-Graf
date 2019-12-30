@@ -1,7 +1,6 @@
 package dataStructure;
 
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.Iterator;
 import org.junit.jupiter.api.Test;
 import utils.Point3D;
 

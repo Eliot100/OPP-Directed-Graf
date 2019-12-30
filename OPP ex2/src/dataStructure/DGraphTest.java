@@ -3,8 +3,6 @@ package dataStructure;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import org.junit.jupiter.api.Test;
 import utils.Point3D;
@@ -13,57 +11,31 @@ class DGraphTest {
 
 	@Test
 	void testDGraphInLessThen10Sec() {
-//		System.out.println("***testDGraphInLessThen10Sec***");
-//		long first = ZonedDateTime.now().toInstant().toEpochMilli();
-//		DGraph g = new DGraph();
-//		for (int i = 1; i < 1000000 ; i++) {
-//			g.addNode(new Node(g.newId(), new Point3D(i, i)));
-//			if (i >= 10) {
-//				for (int j = 0; j < 10; j++) {
-//					g.connect(i, j, i+j);
-//				}
-//			}
-//		}
-//		for (int i = 1; i < 11; i++) {
-//			g.connect(i, i+10, 10*Math.sqrt(2));
-//		}
-//		long last = ZonedDateTime.now().toInstant().toEpochMilli();
-//		System.out.println("Time in secends : "+((double)(last - first)/1000));
-//		if ((last - first)/1000 > 10 ) {
-//			fail("Should have happened in les then 10 secends ");
-//		}
-		//run in 2.48 secends  
-	}
-	
-	@Test
-	void testDGraphCollectionOfNodeCollectionOfEdge() {
-		System.out.println("***testDGraphCollectionOfNodeCollectionOfEdge***");
-		ArrayList<node_data> nodes = new ArrayList<node_data>();
-		ArrayList<edge_data> edges = new ArrayList< edge_data>();
-		for (int i = -10; i < 11; i++) {
-			nodes.add(new Node(i, new Point3D(i, i*(1/2))));
-		}  
-		Iterator<node_data> it = nodes.iterator();
-		while (it.hasNext()) {
-			node_data n = it.next();
-			if (n.getKey() != 0) {
-				edges.add(new Edge(n.getKey(), 0, Math.abs(n.getKey()) ) );
+		System.out.println("***testDGraphInLessThen10Sec***");
+		long first = ZonedDateTime.now().toInstant().toEpochMilli();
+		DGraph g = new DGraph();
+		for (int i = 1; i < 1000000 ; i++) {
+			g.addNode(new Node(g.newId(), new Point3D(i, i)));
+			if (i >= 10) {
+				for (int j = 0; j < 10; j++) {
+					g.connect(i, j, i+j);
+				}
 			}
 		}
-		DGraph g = new DGraph(nodes, edges);
-		System.out.println(g.edgeSize()+" = "+20);
-		assertEquals(g.edgeSize() , 20);
-		g.removeNode(0);
-		System.out.println(g.edgeSize()+" = "+0);
-		assertEquals(g.edgeSize() , 0);
-		System.out.println(g.nodeSize()+" = "+19);
-		assertEquals(g.nodeSize() , 19);
-		assertNotEquals(g.edgeSize(), edges.size());
+		for (int i = 1; i < 11; i++) {
+			g.connect(i, i+10, 10*Math.sqrt(2));
+		}
+		long last = ZonedDateTime.now().toInstant().toEpochMilli();
+		System.out.println("Time in secends : "+((double)(last - first)/1000));
+		if ((last - first)/1000 > 10 ) {
+			fail("Should have happened in les then 10 secends ");
+		}
+		//run in 2.48 seconds  
 	}
 
 	@Test
-	void testCopyDGraph() {
-		System.out.println("***testCopyDGraph***");
+	void testDGraphGraph() {
+		System.out.println("***testDGraphGraph***");
 		DGraph g = new DGraph();
 		for (int i = 0; i < 10 ; i++) {
 			g.addNode(new Node(i, new Point3D(i, i)));
@@ -71,22 +43,20 @@ class DGraphTest {
 		for (int i = 0; i < 10; i++) {
 			g.connect(i, (i+1)%10, 1);
 		}
-		System.out.println("g.edgeSize = "+g.edgeSize());
-		DGraph d = g.copy();
-		System.out.println(d.edgeSize()+" = "+g.edgeSize());
-		assertEquals(d.edgeSize() , g.edgeSize());
+		DGraph d = new DGraph(g);
 		System.out.println("g.edgeSize = "+g.edgeSize());
 		System.out.println("d.edgeSize = "+d.edgeSize());
-		d.removeEdge(0, 1);
-		System.out.println(d.edgeSize()+" != "+g.edgeSize());
-		assertNotEquals(d.edgeSize() , g.edgeSize());
-	
-	}
-
-	@Test
-	void testDGraphGraph() {
-		System.out.println("***testDGraphGraph***");
-		fail("Not yet implemented"); // TODO
+		assertEquals(d.edgeSize() , g.edgeSize());
+		System.out.println("g.nodeSize = "+g.nodeSize());
+		System.out.println("d.nodeSize = "+d.nodeSize());
+		assertEquals(d.edgeSize() , g.edgeSize());
+		for (Iterator<node_data> iterator = g.getV().iterator(); iterator.hasNext();) {
+			node_data node = iterator.next();
+			assertEquals(node, d.getNode(node.getKey()));
+			for (edge_data edge : g.getE(node.getKey())) {
+				assertEquals(edge, d.getEdge(edge.getSrc(), edge.getDest()));
+			}
+		}
 	}
 
 	@Test
@@ -143,17 +113,45 @@ class DGraphTest {
 			assertEquals(n, new Node(n.getKey(), new Point3D(n.getKey(), n.getKey())));
 		}
 	}
-
+	
 	@Test
-	void testGetE() {
-		System.out.println("***testGetE***");
-		this.testCopyDGraph();
-	}
-
-	@Test
-	void testRemoveNodeAndEdge() {
+	void testRemoveNodeAndEdgeAndTestGetE() {
 		System.out.println("***testRemoveNodeAndEdge***");
-		fail("Not yet implemented"); // TODO
+		DGraph g = new DGraph();
+		for (int i = 0; i < 10; i++) {
+			g.addNode(new Node(g.newId(), new Point3D(i, i)));
+		}
+		int size1 = g.nodeSize();
+		System.out.println("myDGraph number of nodes = "+g.nodeSize()+" (before remove)");
+		g.removeNode(1);
+		int size2 = g.nodeSize();
+		System.out.println("myDGraph number of nodes = "+g.nodeSize()+" (after remove)");
+		assertNotEquals(size1, size2);
+		assertEquals(size1, 10);
+		if (g.getNode(1) != null)
+			fail("The node with index 1 dosn't been removed.");
+		for (int i = 2; i < 10; i++) {
+			g.connect(i, i+1, 1.5);
+		}
+		for (Iterator<node_data> iterator = g.getV().iterator(); iterator.hasNext();) {
+			node_data node = iterator.next();
+			System.out.println("node key: "+node.getKey()+" node number of edges: "+g.getE(node.getKey()).size());
+		}
+		int size3 = g.edgeSize();
+		System.out.println("myDGraph number of edges = "+g.edgeSize()+" (before remove)");
+		edge_data i = g.removeEdge(2, 3);
+		edge_data j = g.removeEdge(2, 3);
+		System.out.println(i);
+		System.out.println(j);
+		int size4 = g.edgeSize();
+		System.out.println("myDGraph number of edges = "+g.edgeSize()+" (after remove)");
+		assertNotEquals(size3, size4);
+		assertEquals(size4, 7);
+		System.out.println("g.getE(4).size = "+g.getE(4).size());
+		assertEquals(g.getE(4).size(), 1);
+		System.out.println("g.getE(5).size = "+g.getE(5).size());
+		assertNotEquals(g.getE(5).size(), 2);
+		
 	}
 
 	@Test
@@ -166,14 +164,15 @@ class DGraphTest {
 		for (int i = 0; i < 10; i++) {
 			g.connect(i, (i+1)%10, 1);
 		}
+		
 		System.out.println("g.edgeSize = "+g.edgeSize());
-		DGraph d = g.copy();
-		System.out.println(d.edgeSize()+" = "+g.edgeSize());
-		assertEquals(d.edgeSize() , g.edgeSize());
+		DGraph d = new DGraph(g);
 		System.out.println("g.edgeSize = "+g.edgeSize());
 		System.out.println("d.edgeSize = "+d.edgeSize());
-		d.removeEdge(0, 1);
-		System.out.println(d.edgeSize()+" != "+g.edgeSize());
+		assertEquals(d.edgeSize() , g.edgeSize());
+		d.removeEdge(1, 2);
+		System.out.println("g.edgeSize = "+g.edgeSize());
+		System.out.println("d.edgeSize = "+d.edgeSize());
 		assertNotEquals(d.edgeSize() , g.edgeSize());
 	}
 
