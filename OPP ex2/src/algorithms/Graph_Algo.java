@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
-
 import com.google.gson.Gson;
 import dataStructure.DGraph;
 import dataStructure.Edge;
@@ -32,6 +30,7 @@ public class Graph_Algo implements graph_algorithms{
 	public static void main(String[] arr) {
 		Graph_Algo ga = new Graph_Algo();
 		Graph_Algo ga2 = new Graph_Algo();
+		Graph_Algo ga3 = new Graph_Algo();
 		DGraph d = new DGraph();
 		int action = 11;
 		if(action == 1) {
@@ -45,17 +44,37 @@ public class Graph_Algo implements graph_algorithms{
 				d.connect(i, i+1, 1);
 			}
 		} else {
-			for (int i = 0; i < 100; i++) {
+			for (int i = 1; i < 100; i++) {
 				d.addNode(new Node( i, new Point3D(i, i)));
 			}
-			for (int i = 0; i < 100; i++) {
-				d.connect(i, i+1, i/2);
+			for (int i = 1; i < 100; i++) {
+				d.connect(i, i+1,(double) i/5);
 			}
 		}
 		ga.init(d);
 		ga.save("2.txt");
 		ga2.init("2.txt");
-		System.out.println(""+ga.isConnected());
+		if(ga2.isConnected()) {
+			System.out.println("rong");
+		}
+		else 
+			System.out.println("isConnected = false");
+		ga2.graph.connect(99, 1, 45);
+		if(ga2.isConnected()) {
+			System.out.println("isConnected = true");
+		}
+		else 
+			System.out.println("rong");
+		double x = ga2.shortestPathDist(1, 6);
+		System.out.println("shortestPathDist(1, 6) = "+x);
+		ga3.graph = (DGraph) ga2.copy();
+		if(ga3.isConnected()) {
+			System.out.println("isConnected = true");
+		}
+		else 
+			System.out.println("rong");
+		double x2 = ga3.shortestPathDist(1, 10);
+		System.out.println("shortestPathDist(1, 10) = "+x2);
 	}
 	
 	@Override
@@ -76,9 +95,6 @@ public class Graph_Algo implements graph_algorithms{
 			br.close();
 			Gson gson = new Gson();
 			DG_params params = gson.fromJson(st0, DG_params.class);
-//			for (int i = 0; i < 10; i++) {
-//				System.out.println(params.nodeHash.get(i));
-//			}
 			this.graph = new DGraph(params.lastId, params.MC, params.nodeHash, params.edgeHash, params.edgeHashSize);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -94,6 +110,7 @@ public class Graph_Algo implements graph_algorithms{
 		private HashMap<Integer, HashMap<Integer, Edge>> edgeHash;
 		private int edgeHashSize;
 		
+		@SuppressWarnings("unused")
 		public DG_params(int lastId, int MC, HashMap<Integer, Node> nodeHash, 
 				HashMap<Integer, HashMap<Integer, Edge>> edgeHash, int edgeHashSize) {
 			this.lastId = lastId;
@@ -102,11 +119,6 @@ public class Graph_Algo implements graph_algorithms{
 			this.edgeHash = edgeHash;
 			this.edgeHashSize = edgeHashSize;
 		}
-	}
-	
-	private DGraph graphFromParams(DG_params p) {
-		DGraph d = new DGraph(p.lastId, p.MC, p.nodeHash, p.edgeHash, p.edgeHashSize);
-		return d;
 	}
 
 	@Override
@@ -130,10 +142,22 @@ public class Graph_Algo implements graph_algorithms{
 		this.achivedAll(n);
 		while (itr.hasNext()) {
 			node_data temp = itr.next();
-			if (!temp.getInfo().equals("Achieved"))
-					return false;
-			if (this.shortestPath(temp.getKey(), n.getKey()) == null) {
+			if (temp.getInfo().equals("Through")) {
+				continue;
+			}
+			if (!temp.getInfo().equals("Achieved")) {
 				return false;
+			}
+			List<node_data> shortestPath  = this.shortestPath(temp.getKey(), n.getKey()) ;
+			if (shortestPath == null) {
+//				System.out.println("shortestPath("+temp.getKey()+", "+n.getKey()+" ) == null");
+				return false;
+			}
+			else {
+				for (Iterator<node_data> iterator = shortestPath.iterator(); iterator.hasNext();) {
+					node_data node_data = (node_data) iterator.next();
+					node_data.setInfo("Through");
+				}
 			}
 		}
 		return true;
@@ -146,6 +170,7 @@ public class Graph_Algo implements graph_algorithms{
 		for (edge_data e : graph.getE(n.getKey())) {
 			if(!graph.getNode(e.getDest()).getInfo().equals("Achieved")) {
 				graph.getNode(e.getDest()).setInfo("Achieved");
+//				System.out.println(e+"\nNode dest info : "+graph.getNode(e.getDest()).getInfo());
 				this.achivedAll(graph.getNode(e.getDest()));
 			}
 		}
@@ -177,8 +202,10 @@ public class Graph_Algo implements graph_algorithms{
 	public List<node_data> shortestPath(int src, int dest) {
 		node_data source = graph.getNode(src);
 		node_data destanation = graph.getNode(dest);
-		if(source == null || destanation == null)
+		if(source == null || destanation == null) {
+//			System.out.println("source = "+source+"\ndestanation = "+destanation);
 			return null;
+		}
 //		HashMap<Integer, node_data> hasReached = new HashMap<Integer, node_data>();
 		HashMap<Integer, LinkedList<node_data>> pathes = new HashMap<Integer, LinkedList<node_data>>();
 		ArrayList<Integer> onEdge = new ArrayList<Integer>();
@@ -203,24 +230,39 @@ public class Graph_Algo implements graph_algorithms{
 						minWeight = e;
 				}
 			}
-			if (minWeight == null)
+//			System.out.println("minWeight = "+minWeight);
+			if (minWeight == null) {
 				return null;
-			pathes.put(minWeight.getDest(), copyAndAdd(pathes.get(minWeight.getSrc()), graph.getNode(minWeight.getDest()) ));
-			if(minWeight.getDest() == dest)
-				return pathes.get(minWeight.getDest());
+			}
+			onEdge.add(minWeight.getDest());
 			graph.getNode(minWeight.getDest()).setInfo("Reached");
 			graph.getNode(minWeight.getSrc()).setTag(graph.getNode(minWeight.getSrc()).getTag()-1);
 			if (graph.getNode(minWeight.getSrc()).getTag() == 0) {
-				boolean flag = false;
-				for (int i = 0; i < onEdge.size() && !flag ; i++) {
-					if (onEdge.get(i).equals(minWeight.getSrc())) {
-						onEdge.remove(i);
-						flag = true;
-					}
-				}
-				
+				LinkedList<node_data> path = pathes.get(minWeight.getSrc());
+				path.add(graph.getNode(minWeight.getDest()));
+				pathes.put(minWeight.getDest(), path);
+				pathes.remove(minWeight.getSrc());
 			}
+			else
+				pathes.put(minWeight.getDest(), copyAndAdd(pathes.get(minWeight.getSrc()), graph.getNode(minWeight.getDest()) ));
+			if(minWeight.getDest() == dest) {
+				return pathes.get(minWeight.getDest());
+			}
+//			if (graph.getNode(minWeight.getSrc()).getTag() == 0) {
+//				boolean flag = false;
+//				for (int i = 0; i < onEdge.size() && !flag ; i++) {
+//					if (onEdge.get(i).equals(minWeight.getSrc())) {
+//						onEdge.remove(i);
+//						flag = true;
+//					}
+//				}
+//				
+//			}
 		}
+		if(pathes.get(destanation.getKey()) != null) {
+			return pathes.get(destanation.getKey());
+		}
+//		System.out.println("defult null" );
 		return null;
 	}
 	/** TODO
@@ -240,6 +282,7 @@ public class Graph_Algo implements graph_algorithms{
 	@Override
 	public List<node_data> TSP(List<Integer> targets) {
 		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

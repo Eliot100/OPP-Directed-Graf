@@ -88,7 +88,7 @@ class NodeTest {
 	void testSetWeight() {
 		System.out.println("***testSetWeight***");
 		Node n = new Node(0, new Point3D(0, 0, 0));
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 20; i++) {
 			double r = Math.random()*1000;
 			double r2 = Math.random()*1000;
 			n.setWeight(r);
@@ -101,7 +101,7 @@ class NodeTest {
 	void testGetInfo() {
 		System.out.println("***testGetInfo***");
 		Node n = new Node(0, new Point3D(0, 0, 0));
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 20; i++) {
 			int r = (int) (Math.random()*1000);
 			int r2 = (int) (Math.random()*1000);
 			if(r == r2)
@@ -109,6 +109,8 @@ class NodeTest {
 			String s = ""+r;
 			String s2 = ""+r2;
 			n.setInfo(s);
+			if(i < 10)
+				System.out.println("n.getInfo : "+n.getInfo());
 			assertEquals(n.getInfo(), s);
 			assertNotEquals(n.getInfo(), s2);
 		}
@@ -118,7 +120,7 @@ class NodeTest {
 	void testSetInfo() {
 		System.out.println("***testSetInfo***");
 		Node n = new Node(0, new Point3D(0, 0, 0));
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 20; i++) {
 			int r = (int) (Math.random()*10000);
 			int r2 = (int) (Math.random()*10000);
 			String s = ""+r;
@@ -133,7 +135,7 @@ class NodeTest {
 	void testGetTag() {
 		System.out.println("***testGetTag***");
 		Node n = new Node(0, new Point3D(0, 0, 0));
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 20; i++) {
 			int r = (int) (Math.random()*10000);
 			int r2 = (int) (Math.random()*10000);
 			n.setTag(r);
@@ -146,7 +148,7 @@ class NodeTest {
 	void testSetTag() {
 		System.out.println("***testSetTag***");
 		Node n = new Node(0, new Point3D(0, 0, 0));
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 20; i++) {
 			int r = (int) (Math.random()*10000);
 			int r2 = (int) (Math.random()*10000);
 //			if(r == 0 || )

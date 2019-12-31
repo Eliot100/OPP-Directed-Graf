@@ -13,10 +13,16 @@ public class Edge implements edge_data {
 	/**
 	 * This is a constructor for an Edge.
 	 */
-	public Edge(int src, int dest, double w ) {
+	public Edge(int src, int dest, double w ) {//Edge weight must be positive
+		if (w <= 0) {
+			System.out.println("Edge weight must be positive.");
+			return;
+		}
 		source = src;
 		destination = dest;
 		weight = w;
+		info = "";
+		tag = 0;
 	}
 	/**
 	 * 

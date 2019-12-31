@@ -131,6 +131,7 @@ public class DGraph implements graph {
 				
 			}
 		}
+		MC = g.getMC();
 	}
 	/**
 	 *  This is a constructor for a new empty DGraph (directed graph).
@@ -149,16 +150,16 @@ public class DGraph implements graph {
 		this.nodeHash = new HashMap<Integer, node_data>();
 		this.edgeHash = new HashMap<Integer, HashMap<Integer, edge_data>> ();
 		for (node_data node : nodeHash.values()) {
-			System.out.println(node.getLocation());
+//			System.out.println(node.getLocation());
 			this.nodeHash.put(node.getKey(), node);
-			System.out.println(nodeHash.get(node.getKey()).getLocation());
+//			System.out.println(nodeHash.get(node.getKey()).getLocation());
 			this.edgeHash.put(node.getKey(), new HashMap<Integer, edge_data>());
 			edgeHash.get(node.getKey());
 			for (edge_data edge : edgeHash.get(node.getKey()).values()) {
-				System.out.println(edge);
+//				System.out.println(edge);
 				this.edgeHash.get(edge.getSrc()).put(edge.getDest(), edge);
 
-				System.out.println(this.getEdge(edge.getSrc(), edge.getDest()));
+//				System.out.println(this.getEdge(edge.getSrc(), edge.getDest()));
 			}
 		}
 	}
