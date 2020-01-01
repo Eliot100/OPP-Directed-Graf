@@ -25,7 +25,7 @@ import utils.Point3D;
  * @author Eli Ruvinov
  */
 public class Graph_Algo implements graph_algorithms{
-	public DGraph graph;
+	public static DGraph graph;
 	
 	public static void main(String[] arr) {
 		Graph_Algo ga = new Graph_Algo();
@@ -79,7 +79,7 @@ public class Graph_Algo implements graph_algorithms{
 	
 	@Override
 	public void init(graph g) {
-		this.graph = new DGraph(g);
+		graph = new DGraph(g);
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class Graph_Algo implements graph_algorithms{
 			br.close();
 			Gson gson = new Gson();
 			DG_params params = gson.fromJson(st0, DG_params.class);
-			this.graph = new DGraph(params.lastId, params.MC, params.nodeHash, params.edgeHash, params.edgeHashSize);
+			graph = new DGraph(params.lastId, params.MC, params.nodeHash, params.edgeHash, params.edgeHashSize);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -126,7 +126,7 @@ public class Graph_Algo implements graph_algorithms{
 		try {
 			File DGraph_JASON = new File(file_name);
 			PrintWriter pw = new PrintWriter(new FileWriter(DGraph_JASON));
-			pw.println(new Gson().toJson(this.graph));
+			pw.println(new Gson().toJson(graph));
 			pw.close();
 		}catch (IOException e) {
 			e.printStackTrace();
@@ -203,10 +203,8 @@ public class Graph_Algo implements graph_algorithms{
 		node_data source = graph.getNode(src);
 		node_data destanation = graph.getNode(dest);
 		if(source == null || destanation == null) {
-//			System.out.println("source = "+source+"\ndestanation = "+destanation);
 			return null;
 		}
-//		HashMap<Integer, node_data> hasReached = new HashMap<Integer, node_data>();
 		HashMap<Integer, LinkedList<node_data>> pathes = new HashMap<Integer, LinkedList<node_data>>();
 		ArrayList<Integer> onEdge = new ArrayList<Integer>();
 		onEdge.add(source.getKey());
@@ -230,7 +228,6 @@ public class Graph_Algo implements graph_algorithms{
 						minWeight = e;
 				}
 			}
-//			System.out.println("minWeight = "+minWeight);
 			if (minWeight == null) {
 				return null;
 			}
@@ -248,21 +245,10 @@ public class Graph_Algo implements graph_algorithms{
 			if(minWeight.getDest() == dest) {
 				return pathes.get(minWeight.getDest());
 			}
-//			if (graph.getNode(minWeight.getSrc()).getTag() == 0) {
-//				boolean flag = false;
-//				for (int i = 0; i < onEdge.size() && !flag ; i++) {
-//					if (onEdge.get(i).equals(minWeight.getSrc())) {
-//						onEdge.remove(i);
-//						flag = true;
-//					}
-//				}
-//				
-//			}
 		}
 		if(pathes.get(destanation.getKey()) != null) {
 			return pathes.get(destanation.getKey());
 		}
-//		System.out.println("defult null" );
 		return null;
 	}
 	/** TODO
@@ -281,8 +267,87 @@ public class Graph_Algo implements graph_algorithms{
 
 	@Override
 	public List<node_data> TSP(List<Integer> targets) {
-		// TODO Auto-generated method stub
+		HashMap<Integer, node_data> targetNodes = new HashMap<Integer, node_data>();
+		for (Integer key : targets) {
+			if (graph.getNode(key) == null ) {
+				return null;
+			} else {
+				node_data node = graph.getNode(key);
+				node.setInfo("");
+				node.setTag(0);
+				targetNodes.put(key, node);
+			}
+		}
 		
+		if(targetNodes.size() < 2) {
+			LinkedList<node_data> TSP = new LinkedList<node_data>();
+			for (Integer key : targets) {
+				TSP.add( graph.getNode(key));
+			}
+			return TSP;
+		}
+		
+		LinkedList<node_data> TSP = getTSPbyHead(targetNodes); 
+		return TSP;
+	}
+
+	private LinkedList<node_data> getTSPbyHead(HashMap<Integer, node_data> targetNodes) {
+		Iterator<Integer> itr = targetNodes.keySet().iterator();
+		int headKey = itr.next();
+		HashMap<Integer, node_data> reched = new HashMap<Integer, node_data>();
+		LinkedList<node_data> TSP = new LinkedList<node_data>();
+		node_data pivot = graph.getNode(headKey);
+		reched.put(headKey, pivot);
+		TSP.add(pivot);
+		int miningNodesNum = 1;
+		boolean stopFlag = false;
+		HashMap<Integer, LinkedList<node_data>> pathes = new HashMap<Integer, LinkedList<node_data>>();
+		LinkedList<node_data> path = new LinkedList<node_data>();
+		path.add(pivot);
+		pathes.put(headKey, path);
+		ArrayList<node_data> onEdge = new ArrayList<node_data>();
+		onEdge.add(pivot);
+		while (!onEdge.isEmpty() && stopFlag) {
+			edge_data minWeight = null;
+			boolean first = true;
+			for (node_data node_data : onEdge) {
+				for (edge_data edge : graph.getE(node_data.getKey())) {
+					if (first) {
+						minWeight = edge;
+					} else {
+						if (edge.getWeight() < minWeight.getWeight()) {
+							minWeight = edge;
+						}
+					}
+				}
+			}
+			if (minWeight == null ) {
+				return null;
+			}
+			node_data tempDest = graph.getNode(minWeight.getDest());
+			if(targetNodes.containsKey(tempDest.getKey())) {
+				if (reched.containsKey(tempDest.getKey())) {
+					// TODO
+				} else {
+					reched.put(minWeight.getDest(), tempDest);
+					LinkedList<node_data> newPath = copyAndAdd(pathes.get(minWeight.getSrc()), tempDest);
+					pathes.clear();
+					// TODO
+					pathes.put(tempDest.getKey(), newPath);
+					miningNodesNum++;
+					onEdge.clear();
+					// TODO
+				}
+			}
+			onEdge.add(tempDest);
+			pathes.put(minWeight.getDest(), copyAndAdd(pathes.get(minWeight.getSrc()), tempDest));
+			// TODO
+			if (targetNodes.size() == miningNodesNum) {
+				stopFlag = true;
+			}
+		}
+		if (stopFlag)
+			return TSP;
 		return null;
 	}
 

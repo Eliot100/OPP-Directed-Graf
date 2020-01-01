@@ -715,13 +715,13 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 	// create the menu bar (changed to private)
 	private static JMenuBar createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
-		JMenu menu = new JMenu("File");
-		menuBar.add(menu);
-		JMenuItem menuItem1 = new JMenuItem(" Save...   ");
-		menuItem1.addActionListener(std);
-		menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-		menu.add(menuItem1);
+//		JMenu menu = new JMenu("File");
+//		menuBar.add(menu);
+//		JMenuItem menuItem1 = new JMenuItem(" Save...   ");
+//		menuItem1.addActionListener(std);
+//		menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+//				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+//		menu.add(menuItem1);
 		return menuBar;
 	}
 
@@ -777,11 +777,11 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 			JMenuBar menuBar = new JMenuBar();
 			JMenu menu = new JMenu("File");
 			menuBar.add(menu);
-			JMenuItem menuItem1 = new JMenuItem(" SaveImg ");
-			menuItem1.addActionListener(std);
-			menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-			menu.add(menuItem1);
+//			JMenuItem menuItem1 = new JMenuItem(" SaveImg ");
+//			menuItem1.addActionListener(std);
+//			menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+//					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+//			menu.add(menuItem1);
 			JMenu menu2 = new JMenu("DGraph_Algo");
 			menuBar.add(menu2);
 			JMenuItem menu2Item1 = new JMenuItem(" Save DGraph to file ");
