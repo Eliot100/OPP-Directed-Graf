@@ -725,6 +725,93 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 		return menuBar;
 	}
 
+	public static void setCanvasSizeGUIDGraph(int canvasWidth, int canvasHeight) {
+		if (canvasWidth <= 0 || canvasHeight <= 0)
+			throw new IllegalArgumentException("width and height must be positive");
+		width = canvasWidth;
+		height = canvasHeight;
+		GUIDGraphInit();
+	}
+	
+	private static void GUIDGraphInit() {
+		if (frame != null) frame.setVisible(false);
+		frame = new JFrame();
+		offscreenImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		onscreenImage  = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		offscreen = offscreenImage.createGraphics();
+		onscreen  = onscreenImage.createGraphics();
+		setXscale();
+		setYscale();
+		offscreen.setColor(DEFAULT_CLEAR_COLOR);
+		offscreen.fillRect(0, 0, width, height);
+		setPenColor();
+		setPenRadius();
+		setFont();
+		clear();
+
+		// add antialiasing
+		RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		offscreen.addRenderingHints(hints);
+
+		// frame stuff
+		ImageIcon icon = new ImageIcon(onscreenImage);
+		JLabel draw = new JLabel(icon);
+
+		draw.addMouseListener(std);
+		draw.addMouseMotionListener(std);
+
+		frame.setContentPane(draw);
+		frame.addKeyListener(std);    // JLabel cannot get keyboard focus
+		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);            // closes all windows
+		// frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);      // closes only current window
+		frame.setTitle("Standard Draw");
+		frame.setJMenuBar(createGUIDGraphMenuBar());
+		frame.pack();
+		frame.requestFocusInWindow();
+		frame.setVisible(true);
+	}
+		private static JMenuBar createGUIDGraphMenuBar() {
+			JMenuBar menuBar = new JMenuBar();
+			JMenu menu = new JMenu("File");
+			menuBar.add(menu);
+			JMenuItem menuItem1 = new JMenuItem(" SaveImg ");
+			menuItem1.addActionListener(std);
+			menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			menu.add(menuItem1);
+			JMenu menu2 = new JMenu("DGraph_Algo");
+			menuBar.add(menu2);
+			JMenuItem menu2Item1 = new JMenuItem(" Save DGraph to file ");
+			menu2Item1.addActionListener(std);
+			menu2Item1.setAccelerator(KeyStroke.getKeyStroke("bob"));
+			menu2.add(menu2Item1);
+			JMenuItem menu2Item2 = new JMenuItem(" init DGraph from file ");
+			menu2Item2.addActionListener(std);
+			menu2.add(menu2Item2);
+			JMenuItem menu2Item3 = new JMenuItem(" init DGraph from graph ");
+			menu2Item3.addActionListener(std);
+			menu2.add(menu2Item3);
+			JMenuItem menu2Item4 = new JMenuItem(" Cheack isConnected ");
+			menu2Item4.addActionListener(std);
+			menu2.add(menu2Item4);
+			JMenuItem menu2Item5 = new JMenuItem(" shortestPathDist ");
+			menu2Item5.addActionListener(std);
+			menu2.add(menu2Item5);
+			JMenuItem menu2Item6 = new JMenuItem(" shortestPath ");
+			menu2Item6.addActionListener(std);
+			menu2.add(menu2Item6);
+			JMenuItem menu2Item7 = new JMenuItem(" TSP ");
+			menu2Item7.addActionListener(std);
+			menu2.add(menu2Item7);
+			JMenuItem menu2Item8 = new JMenuItem(" DGraph copy ");
+			menu2Item8.addActionListener(std);
+			menu2.add(menu2Item8);
+			return menuBar;
+		}
+
 
 	/***************************************************************************
 	 *  User and screen coordinate systems.

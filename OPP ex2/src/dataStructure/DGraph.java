@@ -32,6 +32,30 @@ public class DGraph implements graph {
 		lastId++;
 		return lastId;
 	}
+
+	
+	public static DGraph makeRandomGraph(int nodeNum, int edgePresent) {
+		DGraph g = new DGraph();
+		for (int i = 0; i < nodeNum; i++) {
+			double x = Math.random()*200;
+			double y = Math.random()*100;
+			g.addNode(new Node(g.newId(), new Point3D(x, y)));
+		}
+		for (int i = 1; i <= nodeNum; i++) {
+			for (int j = 1; j <= nodeNum; j++) {
+				if ( i != j) {
+					int r = (int) (Math.random()*100);
+					if (r <= edgePresent) {
+						Point3D ii = g.getNode(i).getLocation();
+						Point3D jj = g.getNode(j).getLocation();
+						double dist = Math.abs(ii.distance2D(jj));
+						g.connect(i, j, dist);
+					}
+				}
+			}
+		}
+		return g;
+	}
 	
 	public static DGraph main(int action) {
 		DGraph d = new DGraph();
