@@ -124,7 +124,7 @@ public class Graph_Algo implements graph_algorithms{
 	@Override
 	public void save(String file_name) {
 		try {
-			File DGraph_JASON = new File(file_name);
+			File DGraph_JASON = new File(file_name+".txt");
 			PrintWriter pw = new PrintWriter(new FileWriter(DGraph_JASON));
 			pw.println(new Gson().toJson(graph));
 			pw.close();
