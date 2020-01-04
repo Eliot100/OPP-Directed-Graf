@@ -25,7 +25,7 @@ import utils.Point3D;
  * @author Eli Ruvinov
  */
 public class Graph_Algo implements graph_algorithms{
-	public static DGraph graph;
+	public DGraph graph;
 	
 	public static void main(String[] arr) {
 		Graph_Algo ga = new Graph_Algo();
@@ -85,7 +85,7 @@ public class Graph_Algo implements graph_algorithms{
 	@Override
 	public void init(String file_name) {
 		try {
-			File DGraph_JASON = new File(file_name);
+			File DGraph_JASON = new File(file_name+".txt");
 			BufferedReader br = new BufferedReader(new FileReader(DGraph_JASON));
 			String st0 = "";
 			String st;
@@ -296,17 +296,17 @@ public class Graph_Algo implements graph_algorithms{
 		int headKey = itr.next();
 		HashMap<Integer, node_data> reched = new HashMap<Integer, node_data>();
 		LinkedList<node_data> TSP = new LinkedList<node_data>();
-		node_data pivot = graph.getNode(headKey);
-		reched.put(headKey, pivot);
-		TSP.add(pivot);
+		node_data headNode = graph.getNode(headKey);
+		reched.put(headKey, headNode);
+		TSP.add(headNode);
 		int miningNodesNum = 1;
 		boolean stopFlag = false;
 		HashMap<Integer, LinkedList<node_data>> pathes = new HashMap<Integer, LinkedList<node_data>>();
 		LinkedList<node_data> path = new LinkedList<node_data>();
-		path.add(pivot);
+		path.add(headNode);
 		pathes.put(headKey, path);
 		ArrayList<node_data> onEdge = new ArrayList<node_data>();
-		onEdge.add(pivot);
+		onEdge.add(headNode);
 		while (!onEdge.isEmpty() && stopFlag) {
 			edge_data minWeight = null;
 			boolean first = true;
