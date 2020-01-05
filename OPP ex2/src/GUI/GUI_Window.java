@@ -257,17 +257,16 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 				String fileName = s.next();
 				this.Graph_Algo.save(fileName );
 			} catch (Exception e) {
-				System.out.print("filed to Save DGraph.\n");
+				System.out.println("fail to Save DGraph.");
 			}
 		} else if (str.equals(" init DGraph from file ")) {
 			try {
 				System.out.print("Enter the input file name : ");
 				String fileName = s.next();
 				this.Graph_Algo.init(fileName );
-				Graph_Algo.graph = this.Graph_Algo.graph;
 				this.repaint();
 			} catch (Exception e) {
-				System.out.print("filed to init DGraph.\n");
+				System.out.println("fail to init DGraph.");
 			}
 		} else if (str.equals(" shortestPath ")) {
 			try {
@@ -283,13 +282,13 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 				}
 				this.repaint();
 			} catch (Exception e) {
-				System.out.print("filed to find the shortest path.\n");
+				System.out.println("fail to find the shortest path.");
 			}
 		} else if (str.equals(" TSP ")) {
 			try {
 				List<Integer> targets = new LinkedList<Integer>();
 				boolean flag = true;
-				System.out.println("My TSP algorithem is depend on your first node so dont hory");
+				System.out.println("My TSP algorithem is depend on your first node so dont hory.");
 				while (flag ) {
 				System.out.print("To finish insert Y else insert something else :");
 					String ans = s.next();
@@ -307,7 +306,7 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 				}
 				this.repaint();
 			} catch (Exception e) {
-				System.out.println("filed to find the shortest path.");
+				System.out.println("fail to find the shortest path.");
 				e.printStackTrace();
 			}
 		} else if (str.equals(" New DGraph ")) {
@@ -315,7 +314,7 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 				this.Graph_Algo.graph = new DGraph();
 				this.repaint();
 			} catch (Exception e) {
-				System.out.println("filed to genret new DGraph.");
+				System.out.println("fail to genret new DGraph.");
 			}
 		}  else if (str.equals(" Add Node ")) {
 			try {
@@ -326,7 +325,7 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 				this.Graph_Algo.graph.addNode( new Node(Graph_Algo.graph.newId(), new Point3D(x, y)));
 				this.repaint();
 			} catch (Exception e) {
-				System.out.println("filed to add a node.");
+				System.out.println("fail to add a node.");
 			}
 		}  else if (str.equals(" Remove Node ")) {
 			try {
@@ -335,7 +334,7 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 				Graph_Algo.graph.removeNode(key);
 				this.repaint();
 			} catch (Exception e) {
-				System.out.println("filed to remove a node.");
+				System.out.println("fail to remove a node.");
 			}
 		}  else if (str.equals(" Add Edge ")) {
 			try {
@@ -348,7 +347,7 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 				Graph_Algo.graph.connect(src, dest, w);
 				this.repaint();
 			} catch (Exception e) {
-				System.out.println("filed to add an edge.");
+				System.out.println("fail to add an edge.");
 			}
 		}  else if (str.equals(" Remove Edge ")) {
 			try {
@@ -359,7 +358,7 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 				Graph_Algo.graph.removeEdge(src, dest);
 				this.repaint();
 			} catch (Exception e) {
-				System.out.println("filed to remove an edge.");
+				System.out.println("fail to remove an edge.");
 			}
 		} 
 	}

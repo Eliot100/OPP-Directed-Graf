@@ -212,7 +212,7 @@ public class Graph_Algo implements graph_algorithms{
 		pathes.get(source.getKey()).add(source);
 		for (Iterator<node_data> iterator = graph.getV().iterator(); iterator.hasNext();) {
 			node_data node = iterator.next();
-			node.setInfo("notReached");
+			node.setWeight(0);
 			node.setTag(graph.getE(node.getKey()).size());
 		}
 		while (!onEdge.isEmpty()) {
@@ -222,23 +222,24 @@ public class Graph_Algo implements graph_algorithms{
 				Iterator<edge_data> itr = graph.getE(node.getKey()).iterator();
 				while (itr.hasNext()) {
 					edge_data e = itr.next();
-					if (graph.getNode(e.getDest()).getInfo() == "Reached")
+					if (graph.getNode(e.getDest()).getWeight() != 0)
 						continue;
-					if (minWeight == null || minWeight.getWeight() > e.getWeight() )
+					if (minWeight == null || minWeight.getWeight()+graph.getNode(minWeight.getSrc()).getWeight() > e.getWeight()+graph.getNode(e.getSrc()).getWeight() )
 						minWeight = e;
 				}
 			}
+			System.out.println(minWeight);
 			if (minWeight == null) {
 				return null;
 			}
+			graph.getNode(minWeight.getDest()).setWeight(minWeight.getWeight()+graph.getNode(minWeight.getSrc()).getWeight()); 
 			onEdge.add(minWeight.getDest());
-			graph.getNode(minWeight.getDest()).setInfo("Reached");
-			graph.getNode(minWeight.getSrc()).setTag(graph.getNode(minWeight.getSrc()).getTag()-1);
-			if (graph.getNode(minWeight.getSrc()).getTag() == 0) {
+			if (graph.getNode(minWeight.getSrc()).getTag() == 1) {
 				LinkedList<node_data> path = pathes.get(minWeight.getSrc());
 				path.add(graph.getNode(minWeight.getDest()));
 				pathes.put(minWeight.getDest(), path);
 				pathes.remove(minWeight.getSrc());
+				graph.getNode(minWeight.getSrc()).setTag(0);
 			}
 			else
 				pathes.put(minWeight.getDest(), copyAndAdd(pathes.get(minWeight.getSrc()), graph.getNode(minWeight.getDest()) ));
@@ -246,10 +247,8 @@ public class Graph_Algo implements graph_algorithms{
 				return pathes.get(minWeight.getDest());
 			}
 		}
-		if(pathes.get(destanation.getKey()) != null) {
-			return pathes.get(destanation.getKey());
-		}
-		return null;
+		return pathes.get(destanation.getKey());
+		
 	}
 	/** TODO
 	 * @param path 
