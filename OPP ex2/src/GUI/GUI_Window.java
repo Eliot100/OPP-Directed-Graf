@@ -2,7 +2,6 @@ package GUI;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
@@ -11,16 +10,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.Point2D;
-import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 import algorithms.Graph_Algo;
 import dataStructure.DGraph;
@@ -28,26 +23,17 @@ import dataStructure.Node;
 import dataStructure.edge_data;
 import dataStructure.node_data;
 import utils.Point3D;
-import utils.Range;
-import utils.StdDraw;
 
 public class GUI_Window extends JFrame implements ActionListener, MouseListener, MouseMotionListener {
 	private Graph_Algo Graph_Algo ;
-	private DGraph graph = getGraph();
-	private LinkedList<node_data> BoltedPath; int screenHeight = get_Height();
-	private int screenWidth = get_Width();
-	private static int Height ;
-	private static int Width ;
-	private static final Color edgeColor = new Color(50, 50, 50);
-	private static final Color edgeTextColor = new Color(50, 200, 50);
-	private double edgeRadX = get_Height()/10;
-	private double edgeRadY = get_Width()/10;
-	private static double edgeValsRd;
+	private LinkedList<node_data> BoltedPath; 
+	private static final Color edgeColor = new Color(80, 80, 80);
+	private static final Color edgeTextColor = new Color(50, 50, 200);
 	private static node_data Moving_node;
-	private static int MC;
+//	private static int MC;
 	private static boolean isDrugde;
-	private static final int Yborder = 70;
-	private static final int Xborder = 20;
+	private static final int YUPborder = 50;
+	private static final int border = 25;
 	private static int minY;
 	private static int minX;
 	private static int maxY;
@@ -56,32 +42,24 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 	public GUI_Window() {
 		init();
 	}
-	
-	private DGraph getGraph() {
-		if(Graph_Algo != null)
-			return Graph_Algo.graph;
-		else 
-			return null;
-	}
+
 
 	public GUI_Window( DGraph g) {
 		init();
-		this.graph = g ;
-		this.Graph_Algo.graph = g ;
-		this.repaint();
+		Graph_Algo.graph = g ;
+		repaint();
 	}
 
 	public void paint(Graphics g)  {
 		g.setColor(new Color(255, 255, 255));
 		g.fillRect(0, 0, get_Width(), get_Height());
-//		g.drawLine(x1, y1, x2, y2);
 		minX = 0;
 		maxX = 0;
 		minY = 0;
 		maxY = 0;
 		boolean b = true;
-		if ( graph.nodeSize() != 0 ) {
-			for ( Iterator<node_data> iterator = graph.getV().iterator() ; iterator.hasNext();) {
+		if ( Graph_Algo.graph.nodeSize() != 0 ) {
+			for ( Iterator<node_data> iterator = Graph_Algo.graph.getV().iterator() ; iterator.hasNext();) {
 				node_data node = iterator.next();
 				if(b) {
 					minX = node.getLocation().ix();
@@ -106,37 +84,62 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 		}
 		for ( Iterator<node_data> iterator = this.Graph_Algo.graph.getV().iterator() ; iterator.hasNext();) {
 			node_data node = iterator.next();
+			if (Graph_Algo.graph.getE(node.getKey()) != null)
+				for (Iterator<edge_data> iterator2 = Graph_Algo.graph.getE(node.getKey()).iterator() ; iterator2.hasNext();) {
+					edge_data edge = iterator2.next();
+					//				edge_data edge : graph.getE(node.getKey())) {
+					drowEdge(edge, g);
+				}
+		}
+		for ( Iterator<node_data> iterator = this.Graph_Algo.graph.getV().iterator() ; iterator.hasNext();) {
+			node_data node = iterator.next();
 			drowNode(node, g);
-			for (edge_data edge : graph.getE(node.getKey())) {
-				drowEdge(edge, g);
-			}
+
 		}
 	}
 
 	private int ScaleY(double y) {
-		return (int) (Yborder + (y - minY)*(this.get_Height() - Yborder-10)/maxY) ;
+		return (int) (YUPborder + border + (y - minY)*(this.get_Height() -  YUPborder -2*border)/maxY) ;
 	}
-	
+
 	private int ScaleX(double x) {
-		return (int) (Xborder + (x - minX)*(this.get_Width() - Xborder-10)/maxX) ;
+		return (int) (border + (x - minX)*(this.get_Width() -2*border)/maxX) ;
 	}
-	
+
 	private void drowEdge(edge_data edge, Graphics g) {
-		Point3D sorce = graph.getNode(edge.getSrc()).getLocation();
-		Point3D dest = graph.getNode(edge.getDest()).getLocation();
+		Point3D sorce = Graph_Algo.graph.getNode(edge.getSrc()).getLocation();
+		Point3D dest = Graph_Algo.graph.getNode(edge.getDest()).getLocation();
 		g.setColor(edgeColor);
 		g.drawLine(ScaleX(sorce.ix()), ScaleY(sorce.iy()), ScaleX(dest.ix()), ScaleY(dest.iy()));
+		drowBoltedPath(BoltedPath, g);
+		g.setColor(edgeColor);
 		Point3D DirectionPoint = edgeDirectionPoint( sorce, dest);
-		g.fillOval(ScaleX(DirectionPoint.x() ), ScaleY(DirectionPoint.y() ), 8, 8);
+		g.fillOval(ScaleX(DirectionPoint.x())-5, ScaleY(DirectionPoint.y())-5, 8, 8);
 		g.setColor(edgeTextColor);  
 		Point3D TextPoint = edgeTextPoint( sorce, dest);
 		g.drawString(String.format("%.2f", edge.getWeight()), ScaleX(TextPoint.ix()), ScaleY(TextPoint.iy()));
 	}
 	private void drowNode(node_data node, Graphics g) {
 		g.setColor(Color.MAGENTA);
-		g.fillOval(ScaleX(node.getLocation().x()-1), ScaleY(node.getLocation().y()-1), 10, 10);
+		g.fillOval(ScaleX(node.getLocation().x())-9, ScaleY(node.getLocation().y())-12, 18, 18);
 		g.setColor(edgeColor);
-		g.drawString(""+node.getKey(), ScaleX((int) (node.getLocation().x())), ScaleY((int) (node.getLocation().y())));
+		g.drawString(""+node.getKey(), ScaleX(node.getLocation().x()), ScaleY( node.getLocation().y()));
+	}
+	private void drowBoltedPath(LinkedList<node_data> BoltedPath, Graphics g) {
+		g.setColor(Color.RED);
+		if (BoltedPath != null) {
+			Iterator<node_data> iterator = BoltedPath.iterator();
+			node_data lastNode = iterator.next();
+			for (; iterator.hasNext();) {
+				node_data node = iterator.next();
+				Point3D sorce = lastNode.getLocation();
+				Point3D dest = node.getLocation();
+				for (int i = 0; i < 4; i++) {
+					g.drawLine(ScaleX(sorce.ix())-2+i, ScaleY(sorce.iy())-2+i, ScaleX(dest.ix())-2+i, ScaleY(dest.iy())-2+i);
+				}
+				lastNode = node;
+			}
+		}
 	}
 
 	private Point3D edgeDirectionPoint(Point3D srcPoint, Point3D destPoint) {
@@ -147,25 +150,25 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 		return new Point3D((srcPoint.x()*3+7*destPoint.x())/10, (srcPoint.y()*3+7*destPoint.y())/10);
 	}
 
-	
+
 
 	private int get_Height() {
 		return this.getHeight();
 	}
-	
+
 	private int get_Width() {
 		return this.getWidth();
 	}
 
 	private void init() {
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(true);
 		this.setBackground(Color.WHITE);
 		this.setTitle(" GUI ");
 
 		this.Graph_Algo = new Graph_Algo();
-		graph = new DGraph();
-		
+		this.Graph_Algo.graph = new DGraph();
+
 		Menu menu1 = new Menu("DGraph Algorithems");
 		Menu menu2 = new Menu(" DGraph Actions");
 		MenuBar menuBar = new MenuBar();
@@ -188,107 +191,15 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		
+
 		isDrugde = false;
 		this.setSize(800, 500);
 		this.setVisible(true);
 	}
-	
-//	public void paint(Graphics g) {
-//		g.setColor(new Color(255, 255, 255));
-//		g.fillRect(0, 0, get_Width(), get_Height());
-////		g.drawLine(x1, y1, x2, y2);
-//		double XMin = 0;
-//		double XMax = 0;
-//		double YMin = 0;
-//		double YMax = 0;
-//		boolean b = true;
-//		if ( graph.nodeSize() != 0 ) {
-//			for ( Iterator<node_data> iterator = graph.getV().iterator() ; iterator.hasNext();) {
-//				node_data node = iterator.next();
-//				if(b) {
-//					XMin = node.getLocation().ix();
-//					XMax = node.getLocation().ix();
-//					YMin = node.getLocation().iy();
-//					YMax = node.getLocation().iy();
-//					b = false;
-//				} else {
-//					if (node.getLocation().ix() < XMin ) {
-//						XMin = node.getLocation().ix();
-//					} else if (node.getLocation().ix() > XMax) {
-//						XMax = node.getLocation().ix();
-//					}
-//					if (node.getLocation().iy() < YMin ) {
-//						YMin = node.getLocation().iy();
-//					} else if (node.getLocation().iy() > YMax) {
-//						YMax = node.getLocation().iy();
-//					}
-//				}
-//
-//			}
-//
-//			double dx = XMax-XMin;
-//			double dy = YMax-YMin;
-//			Range XRange = new Range(XMin-(dx/20), XMax+(dx/20));
-//			Range YRange = new Range(YMin-(dy/10), YMax+(dy/10));
-//			if (XRange.get_length() == 0) {
-//				XRange = new Range(XRange.get_min()-1, XRange.get_max()+1);
-//			} 
-//			if (YRange.get_length() == 0) {
-//				YRange = new Range(YRange.get_min()-0.5, YRange.get_max()+0.5);
-//			} 
-//
-//			for (Iterator<node_data> iterator = graph.getV().iterator(); iterator.hasNext();) {
-//				node_data node = iterator.next();
-//				StdDraw.setPenRadius(nodeRd);
-//				g.setColor(StdDraw.MAGENTA);
-//				StdDraw.setPenColor(StdDraw.MAGENTA);
-//				StdDraw.point(node.getLocation().x(), node.getLocation().y());
-//				StdDraw.setPenRadius(nodeTextWi);
-//				StdDraw.setPenColor(new Color(200, 30, 30));
-//				StdDraw.text(node.getLocation().x(), node.getLocation().y()+(dy/25), ""+node.getKey());
-//				for (edge_data edge : graph.getE(node.getKey())) {
-//					Point3D destP = graph.getNode(edge.getDest()).getLocation();
-//					StdDraw.setPenRadius(edgeWi);
-//					StdDraw.setPenColor(new Color(50, 50, 50));
-//					
-////					StdDraw.line(node.getLocation().x(), node.getLocation().y(), destP.x(), destP.y());
-//
-//					g.drawLine((int) node.getLocation().x(), (int) node.getLocation().y(), (int) destP.x(), (int) destP.y());
-//					
-//					StdDraw.setPenRadius(edgeValsRd);
-//					StdDraw.setPenColor(StdDraw.BLUE);
-//					StdDraw.point((node.getLocation().x()+7*destP.x())/8, (node.getLocation().y()+7*destP.y())/8);
-//					StdDraw.text((node.getLocation().x()*3+7*destP.x())/10, (node.getLocation().y()*3+7*destP.y())/10, String.format("%.2f", edge.getWeight()));
-//				}
-//			}
-//		}
-//	}
 
 	public static void main(String[] args) {
 		DGraph d = DGraph.makeRandomGraph(6, 30);
-//		Graph_Algo ga = new Graph_Algo();
-		GUI_Window window = new GUI_Window(d);
-//		int lastmc = 0;
-//		while ( true ) {
-//			if (lastmc != window.graph.getMC() ) {
-////				System.out.println(frame.getHeight()+" 1 "+frame.getWidth());
-//				synchronized (window.graph) {
-//					frame.repaint();
-//					System.out.println("repint");
-//					lastmc = window.graph.getMC();
-//				}
-//			}
-//			else {
-////				System.out.println(frame.getHeight()+" 2 "+frame.getWidth());
-//				try {
-//					Thread.sleep(500);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				} 
-//			}
-//		}
-
+		new GUI_Window(d);
 	}
 
 	@Override
@@ -296,154 +207,161 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 		int x = event.getX();
 		int y = event.getY();
 		while (isDrugde) {
-			Moving_node = new Node(Moving_node.getKey(), new Point3D(x, y));
+			Moving_node = new Node(Moving_node.getKey(), new Point3D(ScaleX(x), ScaleY(y)));
 			this.repaint();
 		}
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent event) {
-		if(screenHeight != Height || screenWidth != Width) {
-			this.repaint();
-			Height = screenHeight;
-			Width = screenWidth;
-		}
+		//		if(screenHeight != Height || screenWidth != Width) {
+		//			this.repaint();
+		//			Height = screenHeight;
+		//			Width = screenWidth;
+		//		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent event) {
-//		this.BoltedPath = null;
-		//		repaint();
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent event) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent event) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mousePressed(MouseEvent event) {
-		int x = event.getX();
-		int y = event.getY();
-		Point3D tmp = new Point3D(x, y);
-		int min_dist = (int) (5 * 1.);
-		double best_dist = 1000000;
-		for (node_data node : graph.getV()) {
-			double dist = tmp.distance3D(node.getLocation());
-			if (dist < min_dist && dist < best_dist) {
-				best_dist = dist;
-				Moving_node = new Node(node.getKey(), new Point3D(x, y));
-				node = Moving_node;
-			}
-		}
-		if (Moving_node == null) {
-			Moving_node = new Node(graph.newId(), tmp);
-			graph.addNode(Moving_node);
-		}
-		else {
-			// TODO new node
-			graph.addNode(new Node(graph.newId(), new Point3D(x, y)));
-		}
-		isDrugde = true;
+		BoltedPath = null;
 		this.repaint();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent event) {
-		// TODO Auto-generated method stub
-		if ( isDrugde = true)
-			this.repaint();
 
-		isDrugde = false;
-		Moving_node = null;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-
 		String str = event.getActionCommand();
-
+		Scanner s = new Scanner(System.in);
 		if (str.equals(" Save DGraph to file ")) {
-			Scanner s = new Scanner(System.in);
-			System.out.print("Enter the output file name : ");
-			String fileName = s.next();
-			this.Graph_Algo.save(fileName );
-			s.close();
+			try {
+				System.out.print("Enter the output file name : ");
+				String fileName = s.next();
+				this.Graph_Algo.save(fileName );
+			} catch (Exception e) {
+				System.out.print("filed to Save DGraph.\n");
+			}
 		} else if (str.equals(" init DGraph from file ")) {
 			try {
-				Scanner s = new Scanner(System.in);
 				System.out.print("Enter the input file name : ");
 				String fileName = s.next();
 				this.Graph_Algo.init(fileName );
+				Graph_Algo.graph = this.Graph_Algo.graph;
 				this.repaint();
-				s.close();
 			} catch (Exception e) {
-				System.out.print("file not found.");
+				System.out.print("filed to init DGraph.\n");
 			}
-
 		} else if (str.equals(" shortestPath ")) {
-			Scanner s = new Scanner(System.in);
-			System.out.print("Plase insert the key of the sorce node : ");
-			int srcKey = Integer.parseInt(s.next());
-			System.out.print("Plase insert the key of the destination node : ");
-			int destKey = Integer.parseInt(s.next());
-			if (this.Graph_Algo.shortestPath(srcKey, destKey) != null) {
-				double pathWight = this.Graph_Algo.shortestPathDist(srcKey, destKey);
-				System.out.println("Shortest path Destination is : "+pathWight);
-			} else { //exist
-				System.out.println("I am sorry. Such path dosen't exist.");
+			try {
+				System.out.print("Plase insert the key of the sorce node : ");
+				int srcKey = s.nextInt();
+				System.out.print("Plase insert the key of the destination node : ");
+				int destKey =  s.nextInt();
+				if (this.Graph_Algo.shortestPath(srcKey, destKey) != null) {
+					BoltedPath = (LinkedList<node_data>) this.Graph_Algo.shortestPath(srcKey, destKey);
+					this.repaint();
+				} else { //exist
+					System.out.println("I am sorry. Such path dosen't exist.");
+				}
+				this.repaint();
+			} catch (Exception e) {
+				System.out.print("filed to find the shortest path.\n");
 			}
-			s.close();
-			this.repaint();
+		} else if (str.equals(" TSP ")) {
+			try {
+				List<Integer> targets = new LinkedList<Integer>();
+				boolean flag = true;
+				System.out.println("My TSP algorithem is depend on your first node so dont hory");
+				while (flag ) {
+				System.out.print("To finish insert Y else insert something else :");
+					String ans = s.next();
+					if (ans.equals("Y")) {
+						flag = false;
+						continue;
+					} 
+					System.out.print("Insert key of the node you want to add : ");
+					int nodeKey = s.nextInt();
+					targets.add(nodeKey);
+				}
+				BoltedPath = (LinkedList<node_data>) this.Graph_Algo.TSP(targets);
+				if (BoltedPath == null) {
+					System.out.println("Didn't meng to find such path.");
+				}
+				this.repaint();
+			} catch (Exception e) {
+				System.out.println("filed to find the shortest path.");
+				e.printStackTrace();
+			}
 		} else if (str.equals(" New DGraph ")) {
-			graph = new DGraph();
-			this.repaint();
+			try {
+				this.Graph_Algo.graph = new DGraph();
+				this.repaint();
+			} catch (Exception e) {
+				System.out.println("filed to genret new DGraph.");
+			}
 		}  else if (str.equals(" Add Node ")) {
-			Scanner s = new Scanner(System.in);
-			System.out.print("Enter the x Value : ");
-			int x = Integer.parseInt(s.next());
-			System.out.print("Enter the y Value : ");
-			int y = Integer.parseInt(s.next());
-			s.close();
-			// Z = 0
-			graph.addNode( new Node(graph.newId(), new Point3D(x, y)));
-			this.repaint();
+			try {
+				System.out.print("Enter the x Value : ");
+				int x = Integer.parseInt(s.next());
+				System.out.print("Enter the y Value : ");
+				int y = Integer.parseInt(s.next());
+				this.Graph_Algo.graph.addNode( new Node(Graph_Algo.graph.newId(), new Point3D(x, y)));
+				this.repaint();
+			} catch (Exception e) {
+				System.out.println("filed to add a node.");
+			}
 		}  else if (str.equals(" Remove Node ")) {
-			Scanner s = new Scanner(System.in);
-			System.out.print("Enter the key Value : ");
-			int key = Integer.parseInt(s.next());
-			s.close();
-			graph.removeNode(key);
-			this.repaint();
+			try {
+				System.out.print("Enter the key Value : ");
+				int key = s.nextInt();
+				Graph_Algo.graph.removeNode(key);
+				this.repaint();
+			} catch (Exception e) {
+				System.out.println("filed to remove a node.");
+			}
 		}  else if (str.equals(" Add Edge ")) {
-			Scanner s = new Scanner(System.in);
-			System.out.print("Enter the suorce key : ");
-			int src = Integer.parseInt(s.next());
-			System.out.print("Enter the dest key : ");
-			int dest = Integer.parseInt(s.next());
-			System.out.print("Enter the edge wight : ");
-			double w = Double.parseDouble(s.next());
-			s.close();
-			graph.connect(src, dest, w);
-			this.repaint();
+			try {
+				System.out.print("Enter the suorce key : ");
+				int src = s.nextInt();
+				System.out.print("Enter the dest key : ");
+				int dest = s.nextInt();
+				System.out.print("Enter the edge wight : ");
+				double w = s.nextDouble();
+				Graph_Algo.graph.connect(src, dest, w);
+				this.repaint();
+			} catch (Exception e) {
+				System.out.println("filed to add an edge.");
+			}
 		}  else if (str.equals(" Remove Edge ")) {
-			Scanner s = new Scanner(System.in);
-			System.out.print("Enter the suorce key : ");
-			int src = Integer.parseInt(s.next());
-			System.out.print("Enter the dest key : ");
-			int dest = Integer.parseInt(s.next());
-			s.close();
-			graph.removeEdge(src, dest);
-			this.repaint();
+			try {
+				System.out.print("Enter the suorce key : ");
+				int src = s.nextInt();
+				System.out.print("Enter the dest key : ");
+				int dest = s.nextInt();
+				Graph_Algo.graph.removeEdge(src, dest);
+				this.repaint();
+			} catch (Exception e) {
+				System.out.println("filed to remove an edge.");
+			}
 		} 
-
 	}
 
 }

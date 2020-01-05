@@ -32,11 +32,12 @@ import java.awt.Color;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.RenderingHints;
-
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -616,7 +617,7 @@ public class StdDraw implements ActionListener, MouseListener, MouseMotionListen
 	private static StdDraw std = new StdDraw();
 
 	// the frame for drawing to the screen
-	private static JFrame frame;
+	public static JFrame frame;
 
 	// mouse state
 	private static boolean isMousePressed = false;
@@ -701,7 +702,7 @@ public class StdDraw implements ActionListener, MouseListener, MouseMotionListen
 
 		frame.setContentPane(draw);
 		frame.addKeyListener(std);    // JLabel cannot get keyboard focus
-		frame.setResizable(false);
+		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);            // closes all windows
 		// frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);      // closes only current window
 		frame.setTitle("Standard Draw");
@@ -714,13 +715,13 @@ public class StdDraw implements ActionListener, MouseListener, MouseMotionListen
 	// create the menu bar (changed to private)
 	private static JMenuBar createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
-//		JMenu menu = new JMenu("File");
-//		menuBar.add(menu);
-//		JMenuItem menuItem1 = new JMenuItem(" Save...   ");
-//		menuItem1.addActionListener(std);
-//		menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-//				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-//		menu.add(menuItem1);
+		JMenu menu = new JMenu("File");
+		menuBar.add(menu);
+		JMenuItem menuItem1 = new JMenuItem(" Save...   ");
+		menuItem1.addActionListener(std);
+		menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		menu.add(menuItem1);
 		return menuBar;
 	}
 
@@ -732,9 +733,14 @@ public class StdDraw implements ActionListener, MouseListener, MouseMotionListen
 		GUIDGraphInit();
 	}
 	
-	private static void GUIDGraphInit() {
+	public static void GUIDGraphInit() {
 		if (frame != null) frame.setVisible(false);
 		frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setTitle(" GUI ");
+		frame.setBackground(Color.WHITE);
+		frame.setSize(600, 700);
+		frame.setResizable(true);
 		offscreenImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		onscreenImage  = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		offscreen = offscreenImage.createGraphics();
@@ -763,10 +769,10 @@ public class StdDraw implements ActionListener, MouseListener, MouseMotionListen
 
 		frame.setContentPane(draw);
 		frame.addKeyListener(std);    // JLabel cannot get keyboard focus
-		frame.setResizable(false);
+		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);            // closes all windows
 		// frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);      // closes only current window
-		frame.setTitle("Standard Draw");
+		frame.setTitle(" GUI ");
 		frame.setJMenuBar(createGUIDGraphMenuBar());
 		frame.pack();
 		frame.requestFocusInWindow();
@@ -774,40 +780,24 @@ public class StdDraw implements ActionListener, MouseListener, MouseMotionListen
 	}
 		private static JMenuBar createGUIDGraphMenuBar() {
 			JMenuBar menuBar = new JMenuBar();
-			JMenu menu = new JMenu("File");
-			menuBar.add(menu);
-//			JMenuItem menuItem1 = new JMenuItem(" SaveImg ");
-//			menuItem1.addActionListener(std);
-//			menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-//					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-//			menu.add(menuItem1);
-			JMenu menu2 = new JMenu("DGraph_Algo");
+			JMenu menu1 = new JMenu(" DGraph Algorithems ");
+			JMenu menu2 = new JMenu(" DGraph Actions");
+			frame.setJMenuBar(menuBar);
+
 			menuBar.add(menu2);
-			JMenuItem menu2Item1 = new JMenuItem(" Save DGraph to file ");
-			menu2Item1.addActionListener(std);
-			menu2Item1.setAccelerator(KeyStroke.getKeyStroke("bob"));
-			menu2.add(menu2Item1);
-			JMenuItem menu2Item2 = new JMenuItem(" init DGraph from file ");
-			menu2Item2.addActionListener(std);
-			menu2.add(menu2Item2);
-			JMenuItem menu2Item3 = new JMenuItem(" init DGraph from graph ");
-			menu2Item3.addActionListener(std);
-			menu2.add(menu2Item3);
-			JMenuItem menu2Item4 = new JMenuItem(" Cheack isConnected ");
-			menu2Item4.addActionListener(std);
-			menu2.add(menu2Item4);
-			JMenuItem menu2Item5 = new JMenuItem(" shortestPathDist ");
-			menu2Item5.addActionListener(std);
-			menu2.add(menu2Item5);
-			JMenuItem menu2Item6 = new JMenuItem(" shortestPath ");
-			menu2Item6.addActionListener(std);
-			menu2.add(menu2Item6);
-			JMenuItem menu2Item7 = new JMenuItem(" TSP ");
-			menu2Item7.addActionListener(std);
-			menu2.add(menu2Item7);
-			JMenuItem menu2Item8 = new JMenuItem(" DGraph copy ");
-			menu2Item8.addActionListener(std);
-			menu2.add(menu2Item8);
+			menuBar.add(menu1);
+			String[] algoFunctions = {" Save DGraph to file ", " init DGraph from file ", " shortestPath ", " TSP "};
+			String[] DGraphFunctions = {" New DGraph ", " Add Node ", " Remove Node ", " Add Edge ", " Remove Edge "};
+			for (int i = 0; i < algoFunctions.length; i++) {
+				JMenuItem Item = new JMenuItem(algoFunctions[i]);
+				Item.addActionListener(std);
+				menu1.add(Item);
+			}
+			for (int i = 0; i < DGraphFunctions.length; i++) {
+				JMenuItem Item = new JMenuItem(DGraphFunctions[i]);
+				Item.addActionListener(std);
+				menu2.add(Item);
+			}
 			return menuBar;
 		}
 
@@ -1855,6 +1845,7 @@ public class StdDraw implements ActionListener, MouseListener, MouseMotionListen
 			mouseX = StdDraw.userX(e.getX());
 			mouseY = StdDraw.userY(e.getY());
 		}
+		
 	}
 
 	/**
