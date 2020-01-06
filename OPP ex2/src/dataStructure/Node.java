@@ -27,20 +27,8 @@ public class Node implements node_data  {
 			return false;
 		if(((Node) n).tag != tag)
 			return false;
-		if(((Node) n).info != info)
+		if(!((Node) n).info.equals(info))
 			return false;
-//		Iterator<edge_data> itr = ((Node) n).fromIterator();
-//		while (itr.hasNext()) {
-//			edge_data edge = itr.next();
-//			if(!edge.equals(this.fromThis.get(edge.getDest())))
-//				return false;
-//		}
-//		Iterator<edge_data> itr2 = ((Node) n).toIterator();
-//		while (itr2.hasNext()) {
-//			edge_data edge = itr2.next();
-//			if(!edge.equals(this.fromThis.get(edge.getSrc())))
-//				return false;
-//		}
 		return true;
 	}
 //	/**

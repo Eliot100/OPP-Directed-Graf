@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import GUI.GUI_Window;
 import utils.Point3D;
 /**
  * This class is implementation of directed graph.
@@ -16,20 +17,44 @@ public class DGraph implements graph {
 	private HashMap<Integer, HashMap<Integer, edge_data>> edgeHash;
 	private int edgeHashSize;
 	
+	public boolean equals(Object g) {
+		if(g instanceof DGraph) {
+			for (Iterator<node_data> iterator = ((DGraph) g).getV().iterator(); iterator.hasNext();) {
+				Node node = (Node) iterator.next();
+				if (!node.equals((Node) this.getNode(node.getKey())))
+					return false;
+				for (Iterator<edge_data> iterator2 = ((DGraph) g).getE(node.getKey()).iterator(); iterator2.hasNext();) {
+					Edge edge = (Edge) iterator2.next();
+					if (!edge.equals((Edge) this.getEdge(edge.getSrc(), edge.getDest())))
+						return false;
+				}	
+			}
+			if (((DGraph) g).nodeSize() != this.nodeSize() || ((DGraph) g).edgeSize() != this.edgeSize())
+				return false;
+			return true;
+		}
+		return false;
+	}
 	/**
-	 * TODO
-	 * @return
+	 * @return new key.
 	 */
 	public int newId() {
 		lastId++;
 		return lastId;
 	}
-
 	/**
-	 * TODO
-	 * @param nodeNum
-	 * @param edgePresent
-	 * @return
+	 * this is an example how to make the GUI_Window object from DGraph.
+	 */
+	public static void main(String[] args) throws InterruptedException {
+		DGraph d = makeRandomGraph(6, 200);
+		new GUI_Window(d);
+	}
+	/**
+	 * @param nodeNum - the number of node in the new DGraph.
+	 * @param edgePresent - the present for an edge to by made. 
+							bigger then 100 = always.
+							smaller then 0 = never.
+	 * @return a new DGraph.
 	 */
 	public static DGraph makeRandomGraph(int nodeNum, int edgePresent) {
 		DGraph g = new DGraph();
@@ -54,36 +79,7 @@ public class DGraph implements graph {
 		return g;
 	}
 	/**
-	 * TODO
-	 * @param action
-	 * @return
-	 */
-	public static DGraph main(int action) {
-		DGraph d = new DGraph();
-		
-		if(action == 1) {
-			for (int i = 0; i < 1000; i++) {
-				if(i%2 == 1)
-					d.addNode(new Node(d.newId(), new Point3D(0, i)));
-				else
-					d.addNode(new Node(d.newId(), new Point3D(i, 0)));
-			}
-			for (int i = 1; i < 1000; i++) {
-				d.connect(i, i+1, 1);
-			}
-		} else {
-			for (int i = 0; i < 100; i++) {
-				d.addNode(new Node( i, new Point3D(i, i)));
-			}
-			for (int i = 0; i < 100; i++) {
-				d.connect(i, i+1, i/2);
-			}
-		}
-		return d;
-	}
-	/**
 	 *  This is a constructor for a DGraph from a graph.
-	 * @param g
 	 */
 	public DGraph(graph g) {
 		int biggestID = 0; 
@@ -112,6 +108,7 @@ public class DGraph implements graph {
 		MC = g.getMC();
 		edgeHashSize = g.edgeSize();
 	}
+	
 	/**
 	 *  This is a constructor for a new empty DGraph (directed graph).
 	 */
@@ -123,12 +120,7 @@ public class DGraph implements graph {
 		edgeHash = new HashMap<Integer, HashMap<Integer, edge_data>>();
 	}
 	/**
-	 * TODO
-	 * @param lastId
-	 * @param MC
-	 * @param nodeHash
-	 * @param edgeHash
-	 * @param edgeHashSize
+	 * This is an explicit constructor for a new DGraph.
 	 */
 	public DGraph(int lastId, int MC, HashMap<Integer, Node> nodeHash, HashMap<Integer, HashMap<Integer, Edge>> edgeHash, int edgeHashSize) {
 		this.lastId = lastId;

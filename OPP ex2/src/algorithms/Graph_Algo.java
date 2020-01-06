@@ -52,8 +52,8 @@ public class Graph_Algo implements graph_algorithms{
 			}
 		}
 		ga.init(d);
-		ga.save("2.txt");
-		ga2.init("2.txt");
+		ga.save("2");
+		ga2.init("2");
 		if(ga2.isConnected()) {
 			System.out.println("rong");
 		}
@@ -79,7 +79,11 @@ public class Graph_Algo implements graph_algorithms{
 	
 	@Override
 	public void init(graph g) {
-		graph = new DGraph(g);
+		if (g instanceof DGraph) {
+			graph = (DGraph) g;
+		} else {
+			throw new RuntimeException("The graph must be DGrap.");
+		}
 	}
 
 	@Override

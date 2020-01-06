@@ -34,11 +34,19 @@ class DGraphTest {
 		long last = ZonedDateTime.now().toInstant().toEpochMilli();
 		System.out.println("Time in secends : "+((double)(last - first)/1000));
 		if ((last - first)/1000 > 10 ) {
-			fail("Should have happened in les then 10 secends ");
+			fail("Should have happened in les then 10 secends.");
 		}
 		//run in 2.48 seconds  
 	}
 
+	@Test
+	void testEqualsObject() {
+		System.out.println("***testEqualsObject***");
+		DGraph d = new DGraph();
+		DGraph g = new DGraph(d);
+		assertEquals(d , g);
+	}
+	
 	@Test
 	void testDGraphGraph() {
 		System.out.println("***testDGraphGraph***");
@@ -67,7 +75,7 @@ class DGraphTest {
 
 	@Test
 	void testGetNodeAndAddNode() {
-		System.out.println("***testGetNodeAndAddNode***");
+//		System.out.println("***testGetNodeAndAddNode***");
 		DGraph g = new DGraph();
 		for (int i = 0; i < 100; i+=5) {
 			Node n = new Node(i, new Point3D(i, i+5));
@@ -80,7 +88,7 @@ class DGraphTest {
 
 	@Test
 	void testGetEdge() {
-		System.out.println("***testGetEdge***");
+//		System.out.println("***testGetEdge***");
 		DGraph g = new DGraph();
 		for (int i = 0; i < 10 ; i++) {
 			g.addNode(new Node(i, new Point3D(i, i)));
@@ -94,7 +102,7 @@ class DGraphTest {
 
 	@Test
 	void testConnect() {
-		System.out.println("***testConnect***");
+//		System.out.println("***testConnect***");
 		DGraph g = new DGraph();
 		for (int i = 0; i < 10 ; i++) {
 			g.addNode(new Node(i, new Point3D(i, i)));
@@ -108,21 +116,21 @@ class DGraphTest {
 
 	@Test
 	void testGetV() {
-		System.out.println("***testGetV***");
+//		System.out.println("***testGetV***");
 		DGraph g = new DGraph();
 		for (int i = 0; i < 10; i++) {
 			g.addNode(new Node(i, new Point3D(i, i)));
 		}
 		assertEquals(g.getV().size(), 10);
 		for (node_data n : g.getV()) {
-			System.out.println(n.getKey()+"  "+n.getLocation());
+//			System.out.println(n.getKey()+"  "+n.getLocation());
 			assertEquals(n, new Node(n.getKey(), new Point3D(n.getKey(), n.getKey())));
 		}
 	}
 	
 	@Test
 	void testRemoveNodeAndEdgeAndTestGetE() {
-		System.out.println("***testRemoveNodeAndEdge***");
+		System.out.println("***testRemoveNodeAndEdgeAndTestGetE***");
 		DGraph g = new DGraph();
 		for (int i = 0; i < 10; i++) {
 			g.addNode(new Node(g.newId(), new Point3D(i, i)));
@@ -139,16 +147,12 @@ class DGraphTest {
 		for (int i = 2; i < 10; i++) {
 			g.connect(i, i+1, 1.5);
 		}
-		for (Iterator<node_data> iterator = g.getV().iterator(); iterator.hasNext();) {
-			node_data node = iterator.next();
-			System.out.println("node key: "+node.getKey()+" node number of edges: "+g.getE(node.getKey()).size());
-		}
 		int size3 = g.edgeSize();
 		System.out.println("myDGraph number of edges = "+g.edgeSize()+" (before remove)");
 		edge_data i = g.removeEdge(2, 3);
-		edge_data j = g.removeEdge(2, 3);
-		System.out.println(i);
-		System.out.println(j);
+		edge_data j = g.getEdge(2, 3);
+		assertNotEquals(i, j);
+		assertEquals(j, null);
 		int size4 = g.edgeSize();
 		System.out.println("myDGraph number of edges = "+g.edgeSize()+" (after remove)");
 		assertNotEquals(size3, size4);
@@ -173,7 +177,6 @@ class DGraphTest {
 		
 		System.out.println("g.edgeSize = "+g.edgeSize());
 		DGraph d = new DGraph(g);
-		System.out.println("g.edgeSize = "+g.edgeSize());
 		System.out.println("d.edgeSize = "+d.edgeSize());
 		assertEquals(d.edgeSize() , g.edgeSize());
 		d.removeEdge(1, 2);
@@ -184,7 +187,7 @@ class DGraphTest {
 
 	@Test
 	void testGetMC() {
-		System.out.println("***testGetMC***");
+//		System.out.println("***testGetMC***");
 		DGraph g = new DGraph();
 		int MC0 = g.getMC();
 		g.addNode(new Node(0, new Point3D(0, 0)));

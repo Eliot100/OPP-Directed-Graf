@@ -1,4 +1,6 @@
 package dataStructure;
+
+
 /**
  * This class represent a directed path 
  * between 2 Nodes in the directed graph.
@@ -10,6 +12,7 @@ public class Edge implements edge_data {
 	private double weight;
 	private String info;
 	private int tag;
+	
 	/**
 	 * This is a constructor for an Edge.
 	 */
@@ -41,7 +44,7 @@ public class Edge implements edge_data {
 			return false;
 		if(((Edge) e).destination != destination)
 			return false;
-		if(((Edge) e).info != info)
+		if(!((Edge) e).info.equals(info))
 			return false;
 		if(((Edge) e).source != source)
 			return false;

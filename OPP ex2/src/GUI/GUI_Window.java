@@ -26,6 +26,8 @@ import utils.Point3D;
  * @author Eli Ruvinov
  */
 public class GUI_Window extends JFrame implements ActionListener, MouseListener, MouseMotionListener {
+
+	private static final long serialVersionUID = -6463212983253616784L;
 	private Graph_Algo Graph_Algo ;
 	private LinkedList<node_data> BoltedPath; 
 	private static final Color edgeColor = new Color(80, 80, 80);
