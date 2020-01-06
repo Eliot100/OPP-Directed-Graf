@@ -27,6 +27,15 @@ import utils.Point3D;
 public class Graph_Algo implements graph_algorithms{
 	public DGraph graph;
 	
+	public Graph_Algo() {}
+	public Graph_Algo(graph graph) {
+		if(graph instanceof DGraph) {
+			this.init(graph);
+		} else {
+			throw new RuntimeException("The graph must be an instanceof DGraph!");
+		}
+	}
+
 	public static void main(String[] arr) {
 		Graph_Algo ga = new Graph_Algo();
 		Graph_Algo ga2 = new Graph_Algo();

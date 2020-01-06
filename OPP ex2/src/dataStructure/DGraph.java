@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import GUI.GUI_Window;
+import gui.GUI_Window;
 import utils.Point3D;
 /**
  * This class is implementation of directed graph.
