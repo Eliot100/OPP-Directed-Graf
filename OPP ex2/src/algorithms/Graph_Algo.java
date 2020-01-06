@@ -97,7 +97,7 @@ public class Graph_Algo implements graph_algorithms{
 			DG_params params = gson.fromJson(st0, DG_params.class);
 			graph = new DGraph(params.lastId, params.MC, params.nodeHash, params.edgeHash, params.edgeHashSize);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("File not found.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
@@ -110,7 +110,6 @@ public class Graph_Algo implements graph_algorithms{
 		private HashMap<Integer, HashMap<Integer, Edge>> edgeHash;
 		private int edgeHashSize;
 		
-		@SuppressWarnings("unused")
 		public DG_params(int lastId, int MC, HashMap<Integer, Node> nodeHash, 
 				HashMap<Integer, HashMap<Integer, Edge>> edgeHash, int edgeHashSize) {
 			this.lastId = lastId;
@@ -228,7 +227,6 @@ public class Graph_Algo implements graph_algorithms{
 						minWeight = e;
 				}
 			}
-			System.out.println(minWeight);
 			if (minWeight == null) {
 				return null;
 			}
@@ -289,65 +287,66 @@ public class Graph_Algo implements graph_algorithms{
 		LinkedList<node_data> TSP = getTSPbyHead(targetNodes); 
 		return TSP;
 	}
-
+	/**
+	 * TODO
+	 * @param targetNodes
+	 * @return
+	 */
 	private LinkedList<node_data> getTSPbyHead(HashMap<Integer, node_data> targetNodes) {
 		Iterator<Integer> itr = targetNodes.keySet().iterator();
 		int headKey = itr.next();
 		HashMap<Integer, node_data> reched = new HashMap<Integer, node_data>();
 		LinkedList<node_data> TSP = new LinkedList<node_data>();
 		node_data headNode = graph.getNode(headKey);
+		headNode.setWeight(0); 
 		reched.put(headKey, headNode);
 		TSP.add(headNode);
 		int miningNodesNum = 1;
-		boolean stopFlag = false;
 		HashMap<Integer, LinkedList<node_data>> pathes = new HashMap<Integer, LinkedList<node_data>>();
 		LinkedList<node_data> path = new LinkedList<node_data>();
 		path.add(headNode);
 		pathes.put(headKey, path);
 		ArrayList<node_data> onEdge = new ArrayList<node_data>();
 		onEdge.add(headNode);
-		while (!onEdge.isEmpty() && stopFlag) {
+		LinkedList<edge_data> walkenEdges = new LinkedList<edge_data>();
+		while (!onEdge.isEmpty()) {
 			edge_data minWeight = null;
 			boolean first = true;
 			for (node_data node_data : onEdge) {
 				for (edge_data edge : graph.getE(node_data.getKey())) {
-					if (first) {
+					if (walkenEdges.contains(edge)) {
+						continue;
+					} else if (first) {
 						minWeight = edge;
-					} else {
-						if (edge.getWeight() < minWeight.getWeight()) {
+						first = false;
+					} else if (edge.getWeight() + graph.getNode(edge.getSrc()).getWeight() < minWeight.getWeight() + graph.getNode(minWeight.getSrc()).getWeight() ) {
 							minWeight = edge;
-						}
 					}
 				}
 			}
 			if (minWeight == null ) {
 				return null;
 			}
+			walkenEdges.add(minWeight);
 			node_data tempDest = graph.getNode(minWeight.getDest());
-			if(targetNodes.containsKey(tempDest.getKey())) {
-				if (reched.containsKey(tempDest.getKey())) {
-					// TODO
-				} else {
+			tempDest.setWeight(minWeight.getWeight() + graph.getNode(minWeight.getSrc()).getWeight());
+			if(targetNodes.containsKey(tempDest.getKey()) && (!reched.containsKey(tempDest.getKey()))) {
 					reched.put(minWeight.getDest(), tempDest);
 					LinkedList<node_data> newPath = copyAndAdd(pathes.get(minWeight.getSrc()), tempDest);
 					pathes.clear();
-					// TODO
 					pathes.put(tempDest.getKey(), newPath);
+					TSP = newPath;
 					miningNodesNum++;
 					onEdge.clear();
-					// TODO
-				}
-			}
-			onEdge.add(tempDest);
-			pathes.put(minWeight.getDest(), copyAndAdd(pathes.get(minWeight.getSrc()), tempDest));
-			// TODO
-			if (targetNodes.size() == miningNodesNum) {
-				stopFlag = true;
+					onEdge.add(tempDest);
+					walkenEdges.clear();
+					if (targetNodes.size() == miningNodesNum) {
+						return TSP;
+					}
+			} else {
+				pathes.put(minWeight.getDest(), copyAndAdd(pathes.get(minWeight.getSrc()), tempDest));
 			}
 		}
-		
-		if (stopFlag)
-			return TSP;
 		return null;
 	}
 

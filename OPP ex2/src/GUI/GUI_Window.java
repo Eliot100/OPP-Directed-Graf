@@ -14,42 +14,54 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-
 import javax.swing.JFrame;
-
 import algorithms.Graph_Algo;
 import dataStructure.DGraph;
 import dataStructure.Node;
 import dataStructure.edge_data;
 import dataStructure.node_data;
 import utils.Point3D;
-
+/**
+ * This clas 
+ * @author Eli Ruvinov
+ */
 public class GUI_Window extends JFrame implements ActionListener, MouseListener, MouseMotionListener {
 	private Graph_Algo Graph_Algo ;
 	private LinkedList<node_data> BoltedPath; 
 	private static final Color edgeColor = new Color(80, 80, 80);
 	private static final Color edgeTextColor = new Color(50, 50, 200);
-	private static node_data Moving_node;
-//	private static int MC;
-	private static boolean isDrugde;
 	private static final int YUPborder = 50;
 	private static final int border = 25;
 	private static int minY;
 	private static int minX;
 	private static int maxY;
 	private static int maxX;
-
+	private static Scanner s = new Scanner(System.in);
+	/**
+	 * this is an example how to make the GUI_Window object.
+	 */
+	public static void main(String[] args) throws InterruptedException {
+		DGraph d = DGraph.makeRandomGraph(6, 200);
+		new GUI_Window(d);
+	}
+	/**
+	 * Constructor for empty GUI_Window.
+	 */
 	public GUI_Window() {
 		init();
 	}
-
-
+	/**
+	 * Constructor for GUI_Window with a graph in it.
+	 * @param g - the graph for the GUI_Window.
+	 */
 	public GUI_Window( DGraph g) {
 		init();
 		Graph_Algo.graph = g ;
 		repaint();
 	}
-
+	/**
+	 * This is the function that paint the GUI_Window. 
+	 */
 	public void paint(Graphics g)  {
 		g.setColor(new Color(255, 255, 255));
 		g.fillRect(0, 0, get_Width(), get_Height());
@@ -87,23 +99,21 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 			if (Graph_Algo.graph.getE(node.getKey()) != null)
 				for (Iterator<edge_data> iterator2 = Graph_Algo.graph.getE(node.getKey()).iterator() ; iterator2.hasNext();) {
 					edge_data edge = iterator2.next();
-					//				edge_data edge : graph.getE(node.getKey())) {
 					drowEdge(edge, g);
 				}
 		}
 		for ( Iterator<node_data> iterator = this.Graph_Algo.graph.getV().iterator() ; iterator.hasNext();) {
 			node_data node = iterator.next();
 			drowNode(node, g);
-
 		}
 	}
 
 	private int ScaleY(double y) {
-		return (int) (YUPborder + border + (y - minY)*(this.get_Height() -  YUPborder -2*border)/maxY) ;
+		return (int) (YUPborder + border + ((y - minY)*(this.get_Height() - YUPborder -(2*border)))/maxY) ;
 	}
 
 	private int ScaleX(double x) {
-		return (int) (border + (x - minX)*(this.get_Width() -2*border)/maxX) ;
+		return (int) (border + ((x - minX)*(this.get_Width() -(2*border)))/maxX) ;
 	}
 
 	private void drowEdge(edge_data edge, Graphics g) {
@@ -149,9 +159,7 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 	private Point3D edgeTextPoint( Point3D srcPoint, Point3D destPoint) {
 		return new Point3D((srcPoint.x()*3+7*destPoint.x())/10, (srcPoint.y()*3+7*destPoint.y())/10);
 	}
-
-
-
+	
 	private int get_Height() {
 		return this.getHeight();
 	}
@@ -161,7 +169,7 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 	}
 
 	private void init() {
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setResizable(true);
 		this.setBackground(Color.WHITE);
 		this.setTitle(" GUI ");
@@ -190,67 +198,24 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 		}
 
 		this.addMouseListener(this);
-		this.addMouseMotionListener(this);
-
-		isDrugde = false;
 		this.setSize(800, 500);
 		this.setVisible(true);
 	}
-
-	public static void main(String[] args) {
-		DGraph d = DGraph.makeRandomGraph(6, 30);
-		new GUI_Window(d);
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent event) {
-		int x = event.getX();
-		int y = event.getY();
-		while (isDrugde) {
-			Moving_node = new Node(Moving_node.getKey(), new Point3D(ScaleX(x), ScaleY(y)));
-			this.repaint();
-		}
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent event) {
-		//		if(screenHeight != Height || screenWidth != Width) {
-		//			this.repaint();
-		//			Height = screenHeight;
-		//			Width = screenWidth;
-		//		}
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent event) {
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent event) {
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent event) {
-
-	}
-
+	
 	@Override
 	public void mousePressed(MouseEvent event) {
 		BoltedPath = null;
 		this.repaint();
 	}
-
+	
 	@Override
-	public void mouseReleased(MouseEvent event) {
-
+	public void mouseDragged(MouseEvent e) {
+		this.repaint();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		String str = event.getActionCommand();
-		Scanner s = new Scanner(System.in);
 		if (str.equals(" Save DGraph to file ")) {
 			try {
 				System.out.print("Enter the output file name : ");
@@ -287,15 +252,9 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 		} else if (str.equals(" TSP ")) {
 			try {
 				List<Integer> targets = new LinkedList<Integer>();
-				boolean flag = true;
-				System.out.println("My TSP algorithem is depend on your first node so dont hory.");
-				while (flag ) {
-				System.out.print("To finish insert Y else insert something else :");
-					String ans = s.next();
-					if (ans.equals("Y")) {
-						flag = false;
-						continue;
-					} 
+				System.out.print("Insert who meny node you want in the TSP : ");
+				int nodeNum = s.nextInt();
+				for (int i = 0; i < nodeNum; i++) {	
 					System.out.print("Insert key of the node you want to add : ");
 					int nodeKey = s.nextInt();
 					targets.add(nodeKey);
@@ -362,5 +321,17 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 			}
 		} 
 	}
+	
+	// for now do nothing.
+	@Override
+	public void mouseMoved(MouseEvent e) {}
+	@Override
+	public void mouseClicked(MouseEvent event) {}
+	@Override
+	public void mouseEntered(MouseEvent event) {}
+	@Override
+	public void mouseExited(MouseEvent event) {}
+	@Override
+	public void mouseReleased(MouseEvent event) {}
 
 }
