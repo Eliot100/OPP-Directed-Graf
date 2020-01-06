@@ -172,7 +172,7 @@ public class GUI_Window extends JFrame implements ActionListener, MouseListener,
 
 	private void init() {
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setResizable(true);
+		this.setResizable(false);
 		this.setBackground(Color.WHITE);
 		this.setTitle(" GUI ");
 
